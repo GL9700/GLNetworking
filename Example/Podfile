@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'GLNetworking_Example' do
+  pod 'GLNetworking', :path => '../'
+
+  target 'GLNetworking_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
