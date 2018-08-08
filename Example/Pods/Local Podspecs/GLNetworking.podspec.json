@@ -1,0 +1,22 @@
+{
+  "name": "GLNetworking",
+  "version": "0.1.0",
+  "summary": "A short description of GLNetworking.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/liandyii@msn.com/GLNetworking",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "liandyii@msn.com": "36617161@qq.com"
+  },
+  "source": {
+    "git": "https://github.com/liandyii@msn.com/GLNetworking.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "GLNetworking/Classes/**/*"
+}

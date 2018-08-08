@@ -1,0 +1,16 @@
+PODS:
+  - GLNetworking (0.1.0)
+
+DEPENDENCIES:
+  - GLNetworking (from `../`)
+
+EXTERNAL SOURCES:
+  GLNetworking:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  GLNetworking: dcd7c261eb346958b06c76d23342ac39a4d883ce
+
+PODFILE CHECKSUM: 999554abf5334711e0ce104edd7b86c834d537ca
+
+COCOAPODS: 1.5.3
