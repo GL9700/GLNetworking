@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '0.2.0'
+  s.version          = '0.2.1'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.

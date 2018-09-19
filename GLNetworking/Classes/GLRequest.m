@@ -12,8 +12,9 @@
 
 #define klogInDEBUG(str,...)        self._config.isDebug==YES?printf("\n[ %p GLNetworking ] %s\n",self,[[NSString stringWithFormat:str, ##__VA_ARGS__] UTF8String]):NULL
 
-#define kMainQueueRun0(blk)         self.isCancel==NO?dispatch_async(dispatch_get_main_queue(), ^{blk==nil?:blk();}):nil
-#define kMainQueueRun(blk , param)  self.isCancel==NO?dispatch_async(dispatch_get_main_queue(), ^{blk==nil?:blk(param);}):nil
+#define kCPT(blk)           self.isCancel==NO?dispatch_async(dispatch_get_main_queue(), ^{blk==nil?:blk();}):nil
+#define kSUC(blk , p1)      self.isCancel==NO?dispatch_async(dispatch_get_main_queue(), ^{blk==nil?:blk(p1);}):nil
+#define kFAD(blk , p1 , p2) self.isCancel==NO?dispatch_async(dispatch_get_main_queue(), ^{blk==nil?:blk(p1 , p2);}):nil
 
 #define kErrorCustomUserInfo(usif)  [NSError errorWithDomain:@"InvocationAssertError" code:-30001 userInfo:((usif)==nil)?@{@"responseObject":responseObject}:(usif)]
 #define kErrorResponseNonEncode     [NSError errorWithDomain:@"数据无内容非编码格式,请增加Decode(NO)" code:-30002 userInfo:@{@"responseObject":responseObject}]
@@ -212,7 +213,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wconditional-type-mismatch"
 /** 数据请求 */
-- (GLRequest *)success:(void(^)(id result))sucBLK Failure:(void(^)(NSError *error ))fadBLK Complete:(void(^)(void))complete {
+- (GLRequest *)success:(void (^)(id))sucBLK failure:(void (^)(NSError *, id))fadBLK complete:(void (^)(void))complete {
     
     NSDictionary *encodedParam;
     
@@ -238,7 +239,7 @@
                     
                     klogInDEBUG(@"-->网络请求(GET):%d | 已得到数据 | 耗时:%.3f's",uniq , CACurrentMediaTime()-stTime);
                     if(responseObject == nil) {
-                        kMainQueueRun(fadBLK , kErrorResponseNULL);
+                        kFAD(fadBLK , kErrorResponseNULL , nil);
                         
                     }else{
                         id resp = [self analyResponse:responseObject withTask:task];
@@ -253,16 +254,16 @@
                         }
                         
                         if(userFailure==YES) {
-                            kMainQueueRun(fadBLK , kErrorCustomUserInfo(userInfo));
+                            kFAD(fadBLK , kErrorCustomUserInfo(userInfo) , resp);
                         }else{
-                            kMainQueueRun(sucBLK , resp);
+                            kSUC(sucBLK , resp);
                         }
                     }
                     dispatch_semaphore_signal(sem);
                     
                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                     klogInDEBUG(@"-->网络请求(GET):%d | 失败 | 耗时:%.3f's | ERR:%@" , uniq , CACurrentMediaTime()-stTime , error);
-                    kMainQueueRun(fadBLK , error);
+                    kFAD(fadBLK , error , nil);
                     dispatch_semaphore_signal(sem);
                 }];
                 break;
@@ -273,7 +274,7 @@
                     
                     klogInDEBUG(@"-->网络请求(POST):%d | 已得到数据 | 耗时:%.3f's",uniq , CACurrentMediaTime()-stTime);
                     if(responseObject == nil) {
-                        kMainQueueRun(fadBLK , kErrorResponseNULL);
+                        kFAD(fadBLK , kErrorResponseNULL , nil);
                         
                     }else{
                         id resp = [self analyResponse:responseObject withTask:task];
@@ -288,16 +289,16 @@
                         }
                         
                         if(userFailure==YES) {
-                            kMainQueueRun(fadBLK , kErrorCustomUserInfo(userInfo));
+                            kFAD(fadBLK , kErrorCustomUserInfo(userInfo) , resp);
                         }else{
-                            kMainQueueRun(sucBLK , resp);
+                            kSUC(sucBLK , resp);
                         }
                     }
                     dispatch_semaphore_signal(sem);
                     
                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                     klogInDEBUG(@"-->网络请求(GET):%d | 失败 | 耗时:%.3f's | ERR:%@" , uniq , CACurrentMediaTime()-stTime , error);
-                    kMainQueueRun(fadBLK , error);
+                    kFAD(fadBLK , error , nil);
                     dispatch_semaphore_signal(sem);
                 }];
                 break;
@@ -305,7 +306,7 @@
         }
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
         klogInDEBUG(@"-->网络请求:%d | 完成 | 共耗时:%.3f's" , uniq , CACurrentMediaTime()-stTime);
-        kMainQueueRun0(complete);
+        kCPT(complete);
     };
     [self.queue addOperation:self.operation];
     
@@ -313,7 +314,7 @@
 }
 
 /** 下载请求 */
-- (GLRequest *)writeToLocalPath:(NSString *)path Progress:(void(^)(float prog))progBLK Success:(void(^)(id result))sucBLK Failure:(void(^)(NSError  *error))fadBLK Complete:(void(^)(void))complete {
+- (GLRequest *)writeToLocalPath:(NSString *)path progress:(void (^)(float))progBLK success:(void (^)(id))sucBLK failure:(void (^)(NSError *, id))fadBLK complete:(void (^)(void))complete {
     
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.url]];
     [req setTimeoutInterval:self._config.timeout];
@@ -329,7 +330,7 @@
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
         self.task = [self.manager downloadTaskWithRequest:req progress:^(NSProgress * _Nonnull downloadProgress) {
             klogInDEBUG(@"-->网络请求(下载):%d | 进度更新 | PROGRESS:%.2f" , uniq , (double)downloadProgress.completedUnitCount/downloadProgress.totalUnitCount);
-            kMainQueueRun(progBLK,(double)downloadProgress.completedUnitCount/downloadProgress.totalUnitCount);
+            kSUC(progBLK,(double)downloadProgress.completedUnitCount/downloadProgress.totalUnitCount);
             
         } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
             return [NSURL fileURLWithPath:path];
@@ -337,23 +338,23 @@
         } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
             klogInDEBUG(@"-->网络请求(下载):%d | 成功 | LOCAL:%@" , uniq , filePath);
             if(error==nil) {
-                kMainQueueRun(sucBLK,response);
+                kSUC(sucBLK,response);
             }else{
-                kMainQueueRun(fadBLK,error);
+                kFAD(fadBLK , error , nil);
             }
             dispatch_semaphore_signal(sem);
         }];
         [self.task resume];
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
         klogInDEBUG(@"-->网络请求(下载):%d | 完成 |  此次请求耗时:%.3f's",uniq , CACurrentMediaTime()-stTime);
-        kMainQueueRun0(complete);
+        kCPT(complete);
     };
     [self.queue addOperation:self.operation];
     return self;
 }
 
 /** 上传请求 fileData: @{FILE_TYPE , @{ FILE_NAME , FILE_DATA }} || @{ FILE_TYPE , FILE_DATA } */
-- (GLRequest *)readFromFileDatas:(NSDictionary<NSString * , id > *)fileDatas Progress:(void(^)(float prog))progBLK Success:(void(^)(id result))sucBLK Failure:(void(^)(NSError  *error))fadBLK Complete:(void(^)(void))complete {
+- (GLRequest *)readFromFileDatas:(NSDictionary<NSString *,id> *)fileDatas progress:(void (^)(float))progBLK success:(void (^)(id))sucBLK failure:(void (^)(NSError *, id))fadBLK complete:(void (^)(void))complete {
     
     @weak(self)
     self.operation.operationBlock = ^{
@@ -379,7 +380,7 @@
             
         } progress:^(NSProgress * _Nonnull uploadProgress) {
             klogInDEBUG(@"-->网络请求(上传):%d | 进度更新 | PROGRESS:%.2f" , uniq , (double)uploadProgress.completedUnitCount/uploadProgress.totalUnitCount);
-            kMainQueueRun(progBLK,(double)uploadProgress.completedUnitCount/uploadProgress.totalUnitCount);
+            kSUC(progBLK,(double)uploadProgress.completedUnitCount/uploadProgress.totalUnitCount);
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             klogInDEBUG(@"-->网络请求(上传):%d | 成功 | RESP:%@" , uniq , responseObject);
@@ -397,42 +398,44 @@
             }
             /* 正常流程 */
             if(responseObject==nil) {   //返回 空
-                kMainQueueRun(fadBLK,kErrorResponseNULL);
+                kFAD(fadBLK,kErrorResponseNULL , nil);
                 
             }else{
-                BOOL willChange2Fail = NO;
+                BOOL userFailure = NO;
                 NSDictionary *customUserInfo = nil;
                 NSError *jsonError = nil;
 
                 // string -> dictionary
-                id result = [NSJSONSerialization JSONObjectWithData:[responseObject dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&jsonError];
+                id resp = [NSJSONSerialization JSONObjectWithData:[responseObject dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&jsonError];
                 
                 // user 2 failed
                 if([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                    willChange2Fail = ![self._config invocationAfterRequestWS:self._wsvsname!=nil?self._wsvsname:self._path success:result toUserFailedInfo:&customUserInfo];
+                    userFailure = ![self._config invocationAfterRequestWS:self._wsvsname!=nil?self._wsvsname:self._path
+                                                                      success:resp
+                                                             toUserFailedInfo:&customUserInfo];
                 }
                 
                 if(jsonError!=nil) {    // to dictionary Failed
-                    kMainQueueRun(fadBLK,kErrorResponseNonEncode);
+                    kFAD(fadBLK,kErrorResponseNonEncode , nil);
                     
                 }else{    // to dictionary Success
-                    if(willChange2Fail==YES) {  // user to Failed
-                        kMainQueueRun(fadBLK,kErrorCustomUserInfo(customUserInfo));
+                    if(userFailure==YES) {  // user to Failed
+                        kFAD(fadBLK,kErrorCustomUserInfo(customUserInfo) , resp);
                         
                     }else{  //user not to failed
-                        kMainQueueRun(sucBLK,result);
+                        kSUC(sucBLK,resp);
                     }
                 }
             }
             dispatch_semaphore_signal(sem);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             klogInDEBUG(@"-->网络请求(上传):%d | 失败 | ERR:%@" , uniq , error);
-            kMainQueueRun(fadBLK,error);
+            kFAD(fadBLK , error , nil);
             dispatch_semaphore_signal(sem);
         }];
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
         klogInDEBUG(@"-->网络请求(上传):%d | 完成 | 共耗时:%.3f's" , uniq , CACurrentMediaTime()-stTime);
-        kMainQueueRun0(complete);
+        kCPT(complete);
     };
     [self.queue addOperation:self.operation];
     return self;

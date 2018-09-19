@@ -58,13 +58,23 @@ typedef NS_ENUM(uint , GLNetMethod) {
 - (GLRequest *(^)(NSString *))webService;
 
 /** 数据请求 */
-- (GLRequest *)success:(void(^)(id result))sucBLK Failure:(void(^)(NSError *error))fadBLK Complete:(void(^)(void))complete;
+- (GLRequest *)success:(void(^)(id response))sucBLK
+               failure:(void(^)(NSError *error , id response))fadBLK
+              complete:(void(^)(void))complete;
 
 /** 下载请求 */
-- (GLRequest *)writeToLocalPath:(NSString *)path Progress:(void(^)(float prog))progBLK Success:(void(^)(id result))sucBLK Failure:(void(^)(NSError  *error))fadBLK Complete:(void(^)(void))complete;
+- (GLRequest *)writeToLocalPath:(NSString *)path
+                       progress:(void(^)(float progress))progBLK
+                        success:(void(^)(id response))sucBLK
+                        failure:(void(^)(NSError *error , id response))fadBLK
+                        complete:(void(^)(void))complete;
 
 /** 上传请求 fileData: @{FILE_TYPE , @{ FILE_NAME , FILE_DATA }} || @{ FILE_TYPE , FILE_DATA } */
-- (GLRequest *)readFromFileDatas:(NSDictionary<NSString * , id > *)fileDatas Progress:(void(^)(float prog))progBLK Success:(void(^)(id result))sucBLK Failure:(void(^)(NSError  *error))fadBLK Complete:(void(^)(void))complete;
+- (GLRequest *)readFromFileDatas:(NSDictionary<NSString * , id > *)fileDatas
+                        progress:(void(^)(float prog))progBLK
+                         success:(void(^)(id response))sucBLK
+                         failure:(void(^)(NSError *error , id response))fadBLK
+                        complete:(void(^)(void))complete;
 
 - (void)cancel;
 
