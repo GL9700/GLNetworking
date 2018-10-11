@@ -57,6 +57,9 @@ typedef NS_ENUM(uint , GLNetMethod) {
 /** 设置请求的 Web Service Name */
 - (GLRequest *(^)(NSString *))webService;
 
+/** 下载请求是否支持断点续传 , 默认 NO */
+- (GLRequest *(^)(BOOL))supportResume;
+
 /** 数据请求 */
 - (GLRequest *)success:(void(^)(id response))sucBLK
                failure:(void(^)(NSError *error , id response))fadBLK

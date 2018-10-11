@@ -26,7 +26,6 @@ static NSOperationQueue *requestQueue;
         manager.requestSerializer.timeoutInterval = (NSTimeInterval)config.timeout;
         requestQueue = [[NSOperationQueue alloc]init];
         requestQueue.maxConcurrentOperationCount = 4;
-        
     });
     return instance;
 }

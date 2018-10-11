@@ -34,6 +34,7 @@
 @property (nonatomic , assign) BOOL obstructDecode; // 非NO 阻断
 @property (nonatomic , strong) NSURLSessionTask *task;
 @property (nonatomic , strong) NSOperationQueue *queue;
+@property (nonatomic , assign) BOOL resume;
 @end
 
 @implementation GLRequest
@@ -51,6 +52,13 @@
     if(self.task.state==NSURLSessionTaskStateRunning)
         [self.task cancel];
     [self.operation cancel];
+}
+
+- (GLRequest *(^)(BOOL))supportResume {
+    return ^(BOOL sresume) {
+        self.resume = sresume;
+        return self;
+    };
 }
 
 - (GLRequest *(^)(GLPriority))priority {
@@ -319,6 +327,17 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.url]];
     [req setTimeoutInterval:self._config.timeout];
     [req setAllHTTPHeaderFields:self._config.header];
+    
+    if(self.resume){
+        NSFileManager *fm = [NSFileManager defaultManager];
+        if([fm fileExistsAtPath:path]) {
+            NSDictionary *fileAttributes = [fm attributesOfItemAtPath:path error:nil];
+            if(fileAttributes){
+                long long localFileSize = [[fileAttributes objectForKey:NSFileSize] longLongValue];
+                [req setValue:[NSString stringWithFormat:@"bytes %llu-" , localFileSize] forHTTPHeaderField:@"Content-Range:"];
+            }
+        }
+    }
     
     @weak(self)
     self.operation.operationBlock = ^{

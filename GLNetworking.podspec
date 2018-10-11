@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '0.2.1'
+  s.version          = '0.2.2'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -17,7 +17,9 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = 'A simple of Networking. '
+  s.description      = 'A simple of Networking.
+    0.2.2 add function : download allow resume use [.supportResume(YES)] , default is NO;
+    '
   s.homepage         = 'https://github.com/GL9700/GLNetworking'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
