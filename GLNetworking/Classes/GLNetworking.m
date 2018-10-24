@@ -23,6 +23,9 @@ static NSOperationQueue *requestQueue;
         instance = [[GLNetworking alloc]init];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
+        if(config.requestJSONSerializer){
+            manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        }
         manager.requestSerializer.timeoutInterval = (NSTimeInterval)config.timeout;
         requestQueue = [[NSOperationQueue alloc]init];
         requestQueue.maxConcurrentOperationCount = 4;

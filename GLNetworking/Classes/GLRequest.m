@@ -84,6 +84,9 @@
             self._config = conf;
             self.manager.requestSerializer.timeoutInterval = self._config.timeout;
         }
+        if(self._config.requestJSONSerializer){
+            self.manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        }
         for(NSString *key in [self._config.header allKeys]){
             [self.manager.requestSerializer setValue:[self._config.header objectForKey:key] forHTTPHeaderField:key];
         }
