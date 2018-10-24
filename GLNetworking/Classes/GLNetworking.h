@@ -14,6 +14,8 @@
 + (instancetype)managerWithConfig:(id<GLNetworkPotocol>)config;
 
 /** 创建Request */
++ (GLRequest *(^)(void))DELETE;
++ (GLRequest *(^)(void))PUT;
 + (GLRequest *(^)(void))POST;
 + (GLRequest *(^)(void))GET;
 + (GLRequest *(^)(void))UPLOAD;

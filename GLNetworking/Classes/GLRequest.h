@@ -17,7 +17,9 @@ typedef NS_ENUM(uint , GLPriority){
 
 typedef NS_ENUM(uint , GLNetMethod) {
     GLMethodPOST,
-    GLMethodGET
+    GLMethodGET,
+    GLMethodDELETE,
+    GLMethodPUT
 };
 
 @class AFSecurityPolicy;

@@ -46,6 +46,22 @@ static NSOperationQueue *requestQueue;
     return request;
 }
 
++ (GLRequest *(^)(void))DELETE {
+    return ^() {
+        GLRequest *req = [GLNetworking createRequest];
+        req.method = GLMethodDELETE;
+        return req;
+    };
+}
+
++ (GLRequest *(^)(void))PUT {
+    return ^() {
+        GLRequest *req = [GLNetworking createRequest];
+        req.method = GLMethodPUT;
+        return req;
+    };
+}
+
 + (GLRequest *(^)(void))POST {
     return ^() {
         GLRequest *req = [GLNetworking createRequest];

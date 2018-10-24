@@ -236,8 +236,7 @@
         @strong(self)
         
         CFTimeInterval stTime = CACurrentMediaTime();
-        int uniq = (int)((stTime-(int)stTime)*1000);
-        
+        int uniq = (int)((stTime-(int)stTime)*1000)+arc4random()%10;
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
         /* 开始 */
         switch (self.method) {
@@ -305,7 +304,55 @@
                     dispatch_semaphore_signal(sem);
                     
                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                    klogInDEBUG(@"-->网络请求(GET):%d | 失败 | 耗时:%.3f's | ERR:%@" , uniq , CACurrentMediaTime()-stTime , error);
+                    klogInDEBUG(@"-->网络请求(POST):%d | 失败 | 耗时:%.3f's | ERR:%@" , uniq , CACurrentMediaTime()-stTime , error);
+                    kFAD(fadBLK , error , nil);
+                    dispatch_semaphore_signal(sem);
+                }];
+                break;
+            }
+            case GLMethodPUT:{
+                klogInDEBUG(@"-->网络请求(PUT):%d | 开始 | URL:%@ | PATH(WS):%@ | PARAMS:%@" , uniq , self.url , self._wsvsname!=nil?self._wsvsname:self._path, self._params);
+                self.task = [self.manager PUT:self.url parameters:encodedParam success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                    klogInDEBUG(@"-->网络请求(PUT):%d | 已得到数据 | 耗时:%.3f's",uniq , CACurrentMediaTime()-stTime);
+                    if(responseObject == nil) {
+                        kFAD(fadBLK , kErrorResponseNULL , nil);
+                    }else{
+                        id resp = [self analyResponse:responseObject withTask:task];
+                        klogInDEBUG(@"-->网络请求(PUT):%d | 已解析数据 | 耗时:%.3f's | RESP:%@" , uniq , CACurrentMediaTime()-stTime , resp);
+                        BOOL userFailure = NO;
+                        NSDictionary *userInfo = nil;
+                        if([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
+                            userFailure = ![self._config invocationAfterRequestWS:self._wsvsname!=nil?self._wsvsname:self._path success:resp toUserFailedInfo:&userInfo];
+                        }
+                        userFailure==YES?kFAD(fadBLK , kErrorCustomUserInfo(userInfo) , resp):kSUC(sucBLK , resp);
+                    }
+                    dispatch_semaphore_signal(sem);
+                } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    klogInDEBUG(@"-->网络请求(PUT):%d | 失败 | 耗时:%.3f's | ERR:%@" , uniq , CACurrentMediaTime()-stTime , error);
+                    kFAD(fadBLK , error , nil);
+                    dispatch_semaphore_signal(sem);
+                }];
+                break;
+            }
+            case GLMethodDELETE:{
+                klogInDEBUG(@"-->网络请求(DELETE):%d | 开始 | URL:%@ | PATH(WS):%@ | PARAMS:%@" , uniq , self.url , self._wsvsname!=nil?self._wsvsname:self._path, self._params);
+                self.task = [self.manager DELETE:self.url parameters:encodedParam success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                    klogInDEBUG(@"-->网络请求(DELETE):%d | 已得到数据 | 耗时:%.3f's",uniq , CACurrentMediaTime()-stTime);
+                    if(responseObject == nil) {
+                        kFAD(fadBLK , kErrorResponseNULL , nil);
+                    }else{
+                        id resp = [self analyResponse:responseObject withTask:task];
+                        klogInDEBUG(@"-->网络请求(DELETE):%d | 已解析数据 | 耗时:%.3f's | RESP:%@" , uniq , CACurrentMediaTime()-stTime , resp);
+                        BOOL userFailure = NO;
+                        NSDictionary *userInfo = nil;
+                        if([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
+                            userFailure = ![self._config invocationAfterRequestWS:self._wsvsname!=nil?self._wsvsname:self._path success:resp toUserFailedInfo:&userInfo];
+                        }
+                        userFailure==YES?kFAD(fadBLK , kErrorCustomUserInfo(userInfo) , resp):kSUC(sucBLK , resp);
+                    }
+                    dispatch_semaphore_signal(sem);
+                } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    klogInDEBUG(@"-->网络请求(DELETE):%d | 失败 | 耗时:%.3f's | ERR:%@" , uniq , CACurrentMediaTime()-stTime , error);
                     kFAD(fadBLK , error , nil);
                     dispatch_semaphore_signal(sem);
                 }];
