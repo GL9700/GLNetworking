@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '0.2.2'
+  s.version          = '0.2.4'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -19,11 +19,12 @@ Pod::Spec.new do |s|
 
   s.description      = 'A simple of Networking.
     0.2.2 add function : download allow resume use [.supportResume(YES)] , default is NO;
+    0.2.4 add PUT DELETE request Method;
     '
   s.homepage         = 'https://github.com/GL9700/GLNetworking'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'GL9700' => '36617161@qq.com' }
+  s.author           = { 'liguoliang' => '36617161@qq.com' }
   s.source           = { :git => 'https://github.com/GL9700/GLNetworking.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
