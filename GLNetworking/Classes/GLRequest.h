@@ -59,8 +59,8 @@ typedef NS_ENUM(uint , GLNetMethod) {
 /** 设置请求的 Web Service Name */
 - (GLRequest *(^)(NSString *))webService;
 
-/** 下载请求是否支持断点续传 , 默认 NO */
-- (GLRequest *(^)(BOOL))supportResume;
+///** 下载请求是否支持断点续传 , 默认 NO */
+//- (GLRequest *(^)(BOOL))supportResume;
 
 /** 数据请求 */
 - (GLRequest *)success:(void(^)(id response))sucBLK
@@ -68,8 +68,8 @@ typedef NS_ENUM(uint , GLNetMethod) {
               complete:(void(^)(void))complete;
 
 /** 下载请求 */
-- (GLRequest *)writeToLocalPath:(NSString *)path
-                       progress:(void(^)(float progress))progBLK
+- (GLRequest *)writeToLocalPath:(NSString *)path resumeInfo:(NSData *)resumeData
+                       progress:(void(^)(uint64_t totalByte ,uint64_t loadedByte))progBLK
                         success:(void(^)(id response))sucBLK
                         failure:(void(^)(NSError *error , id response))fadBLK
                         complete:(void(^)(void))complete;
@@ -81,6 +81,7 @@ typedef NS_ENUM(uint , GLNetMethod) {
                          failure:(void(^)(NSError *error , id response))fadBLK
                         complete:(void(^)(void))complete;
 
-- (void)cancel;
+//- (void *)cancel;
+- (void)cancelTaskWhenDownloadUseBLK:(void(^)(NSData *resumeInfoData))didDownloadData;
 
 @end

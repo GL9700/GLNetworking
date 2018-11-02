@@ -23,7 +23,7 @@ static NSOperationQueue *requestQueue;
         instance = [[GLNetworking alloc]init];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
-        if(config.requestJSONSerializer){
+        if(config.supJSONReq){
             manager.requestSerializer = [AFJSONRequestSerializer serializer];
         }
         manager.requestSerializer.timeoutInterval = (NSTimeInterval)config.timeout;
@@ -99,13 +99,13 @@ static NSOperationQueue *requestQueue;
     @synchronized(requests){
         if(requests!=nil) {
             for(GLRequest *req in requests) {
-                [req cancel];
+                [req cancelTaskWhenDownloadUseBLK:nil];
                 if(req!=nil)
                     [list removeObject:req];
             }
         } else {
             for(GLRequest *req in list) {
-                [req cancel];
+                [req cancelTaskWhenDownloadUseBLK:nil];
             }
             [list removeAllObjects];
         }

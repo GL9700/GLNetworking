@@ -12,7 +12,7 @@
 @property (nonatomic , strong) NSString *host;
 @property (nonatomic , strong) NSDictionary *header;
 @property (nonatomic , assign) NSUInteger timeout;
-@property (nonatomic , assign) BOOL requestJSONSerializer; //是否使用JSON格式进行body传递（默认NO）
+@property (nonatomic , assign) BOOL supJSONReq; //是否使用JSON格式进行body传递（默认NO）JsonSerializer
 @property (nonatomic , assign) BOOL isDebug;  // YES 输出debug信息
 
 @optional
