@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '0.2.6'
+  s.version          = '0.2.7'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -20,7 +20,9 @@ Pod::Spec.new do |s|
   s.description      = 'A simple of Networking.
     0.2.2 add function : download allow resume use [.supportResume(YES)] , default is NO;
     0.2.4 add PUT DELETE request Method;
-    0.2.5 add custom body format in protocal use requestJSONSerializer'
+    0.2.5 add custom body format in protocal use requestJSONSerializer
+    0.2.7 fix timeout not valid [bug has in 0.2.5 ~ 0.2.6]
+    '
   s.homepage         = 'https://github.com/GL9700/GLNetworking'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

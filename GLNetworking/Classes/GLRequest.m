@@ -79,11 +79,11 @@
     return ^(id<GLNetworkPotocol> conf) {
         if (conf != nil) {
             self._config = conf;
-            self.manager.requestSerializer.timeoutInterval = self._config.timeout;
-        }
-        self.manager.requestSerializer = self._config.supJSONReq?[AFJSONRequestSerializer serializer]:[AFHTTPRequestSerializer serializer];
-        for (NSString *key in [self._config.header allKeys]) {
-            [self.manager.requestSerializer setValue:[self._config.header objectForKey:key] forHTTPHeaderField:key];
+            self.manager.requestSerializer = conf.supJSONReq ? [AFJSONRequestSerializer serializer] : [AFHTTPRequestSerializer serializer];
+            self.manager.requestSerializer.timeoutInterval = conf.timeout;
+            for (NSString *key in [conf.header allKeys]) {
+                [self.manager.requestSerializer setValue:[conf.header objectForKey:key] forHTTPHeaderField:key];
+            }
         }
         return self;
     };
