@@ -23,8 +23,10 @@ static NSOperationQueue *requestQueue;
         instance = [[GLNetworking alloc]init];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
-        if(config.supJSONReq){
-            manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        if([config respondsToSelector:@selector(supJSONReq)]){
+            if(config.supJSONReq){
+                manager.requestSerializer = [AFJSONRequestSerializer serializer];
+            }
         }
         manager.requestSerializer.timeoutInterval = (NSTimeInterval)config.timeout;
         requestQueue = [[NSOperationQueue alloc]init];

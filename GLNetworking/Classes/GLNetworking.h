@@ -9,7 +9,7 @@
 #import "GLRequest.h"
 
 @interface GLNetworking : NSObject
-
+@property (nonatomic, strong) NSMutableSet *associatedList;
 /** 初始化*/
 + (instancetype)managerWithConfig:(id<GLNetworkPotocol>)config;
 
