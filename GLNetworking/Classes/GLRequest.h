@@ -49,7 +49,7 @@ typedef NS_ENUM(uint , GLNetMethod) {
 @end
 
 @interface GLRequest(CacheManagerExt)
-
+- (GLRequest *(^)(BOOL))ignoreCache;
 @end
 
 @interface GLRequest(RequestExt)
