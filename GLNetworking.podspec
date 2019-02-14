@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '0.2.7'
+  s.version          = '1.1.0'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -18,6 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = 'A simple of Networking.
+    1.1.0 for cache
     0.2.2 add function : download allow resume use [.supportResume(YES)] , default is NO;
     0.2.4 add PUT DELETE request Method;
     0.2.5 add custom body format in protocal use requestJSONSerializer
