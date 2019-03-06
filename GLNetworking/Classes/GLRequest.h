@@ -55,19 +55,24 @@ typedef NS_ENUM(uint , GLNetMethod) {
 @interface GLRequest(RequestExt)
 /** 数据请求 */
 - (GLRequest *)success:(void(^)(id response))sucBLK
-               failure:(void(^)(NSError *error , id response))fadBLK
+               failure:(void(^)(NSError *error, NSURLResponse *response, id data))fadBLK
               complete:(void(^)(void))complete;
 /** 下载请求 */
 - (GLRequest *)writeToLocalPath:(NSString *)path resumeInfo:(NSData *)resumeData
                        progress:(void(^)(uint64_t totalByte ,uint64_t loadedByte))progBLK
                         success:(void(^)(id response))sucBLK
-                        failure:(void(^)(NSError *error , id response))fadBLK
+                        failure:(void(^)(NSError *error, NSURLResponse *response, id data))fadBLK
                        complete:(void(^)(void))complete;
-/** 上传请求 fileData: @{FILE_TYPE , @{ FILE_NAME , FILE_DATA }} || @{ FILE_TYPE , FILE_DATA } */
+/** 上传请求 fileData: @{MimeType:@{FileName:FileData}} || @{MimeType:FileData}
+ mimeType: "multipart/form-data" | "image/jpg" | ... ...
+ FileName: 名称，可为空
+ FileData: 文件的二进制数据 //图像数据可使用UIImageJPEGRepresentation(img, 0.8)
+ */
+
 - (GLRequest *)readFromFileDatas:(NSDictionary<NSString * , id > *)fileDatas
                         progress:(void(^)(float prog))progBLK
                          success:(void(^)(id response))sucBLK
-                         failure:(void(^)(NSError *error , id response))fadBLK
+                         failure:(void(^)(NSError *error, NSURLResponse *response, id data))fadBLK
                         complete:(void(^)(void))complete;
 - (void)cancelTaskWhenDownloadUseBLK:(void(^)(NSData *resumeInfoData))didDownloadData;
 @end

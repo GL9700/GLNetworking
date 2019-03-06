@@ -31,7 +31,8 @@ typedef BOOL(^BLKIsOnline)(void);
  * @param userInfo :自定义failed Error UserInfo 内容
  * 如果没有进行设置则网络请求是以请求后网络作为判定
  */
-- (BOOL)invocationAfterRequestWS:(NSString *)webserviceORpath success:(id)response toUserFailedInfo:(NSDictionary *__autoreleasing *)userInfo;
+- (BOOL)interceptWithURLResponse:(NSURLResponse *)response success:(id)data toUserFailedInfo:(NSDictionary *__autoreleasing*)userInfo;
+//- (BOOL)invocationAfterRequestWS:(NSString *)webserviceORpath success:(id)response toUserFailedInfo:(NSDictionary *__autoreleasing *)userInfo;
 /** HTTPS local server */
 - (AFSecurityPolicy *)developmentServerSecurity;
 @end

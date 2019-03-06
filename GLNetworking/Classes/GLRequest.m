@@ -9,16 +9,16 @@
 #import "GLCacheData.h"
 #import <CommonCrypto/CommonDigest.h>
 
-#define weak(o)                    autoreleasepool {} __weak typeof(o)o ## Weak = o;
-#define strong(o)                  autoreleasepool {} __strong typeof(o)o = o ## Weak;
-
-#define klogInDEBUG(str, ...)   self._config.isDebug==YES?NSLog(@"GLNetworking-->%@",[NSString stringWithFormat:str, ## __VA_ARGS__]):NULL
-#define kCPT(blk)                  self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(); }) : nil
-#define kSUC(blk, p1)              self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1); }) : nil
-#define kFAD(blk, p1, p2)          self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2); }) : nil
+#define weak(o) autoreleasepool {} __weak typeof(o)o ## Weak = o;
+#define strong(o) autoreleasepool {} __strong typeof(o)o = o ## Weak;
+#define klogInDEBUG(str, ...) self._config.isDebug==YES?NSLog(@"GLNetworking-->%@",[NSString stringWithFormat:str, ## __VA_ARGS__]):NULL
+#define kBLK0(blk) self.isCancel==NO?dispatch_async(dispatch_get_main_queue(),^{blk==nil?:blk();}):nil
+#define kBLK1(blk,p1) self.isCancel==NO?dispatch_async(dispatch_get_main_queue(),^{blk==nil?:blk(p1);}):nil
+#define kBLK2(blk,p1,p2) self.isCancel==NO?dispatch_async(dispatch_get_main_queue(),^{blk==nil?:blk(p1,p2);}):nil
+#define kBLK3(blk,p1,p2,p3) self.isCancel==NO?dispatch_async(dispatch_get_main_queue(),^{blk==nil?:blk(p1,p2,p3);}):nil
 #define kErrorCustomUserInfo(usif,responseData) [NSError errorWithDomain:@"InvocationAssertError" code:-30001 userInfo:((usif) == nil) ? @{ @"responseObject": (responseData)} : (usif)]
 #define kErrorResponseNonEncode [NSError errorWithDomain:@"数据无内容非编码格式,请增加Decode(NO)" code:-30002 userInfo:@{ @"responseObject": responseObject }]
-#define kErrorResponseNULL      [NSError errorWithDomain:@"ResponseObject无效,需重新请求" code:-30003 userInfo:@{ @"responseObject": @"(NULL)" }]
+#define kErrorResponseNULL [NSError errorWithDomain:@"ResponseObject无效,需重新请求" code:-30003 userInfo:@{ @"responseObject": @"(NULL)" }]
 
 static NSMutableSet *kAssociatedList;
 
@@ -317,7 +317,7 @@ static NSMutableSet *kAssociatedList;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wconditional-type-mismatch"
 /** 数据请求 */
-- (GLRequest *)success:(void (^)(id))sucBLK failure:(void (^)(NSError *, id))fadBLK complete:(void (^)(void))complete {
+- (GLRequest *)success:(void (^)(id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
     NSDictionary *encodedParam;
     
     /** 编码参数 webService 优先 */
@@ -338,109 +338,109 @@ static NSMutableSet *kAssociatedList;
             id resp = [self analyResponse:cdata.data withResponse:cdata.response];
             BOOL userFailure = NO;
             NSDictionary *userInfo = nil;
-            if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&userInfo];
+            if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                userFailure = ![self._config interceptWithURLResponse:cdata.response success:resp toUserFailedInfo:&userInfo];
             }
-            userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), resp) : kSUC(sucBLK, resp);
+            userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK1(sucBLK, resp);
             dispatch_semaphore_signal(sem);
         }
         else    // 不存在关联关系
         {
             if([self currentIsOnline]){
-                klogInDEBUG(@"网络请求开始(%d):%d|URL:%@|path:%@|params:%@",self.method, uniq, self.url, self._path, self._params);
+                klogInDEBUG(@"网络请求开始(%d):%d | URL:%@ | path:%@ | params:%@",self.method, uniq, self.url, self._path, self._params);
                 switch (self.method) {
                     case GLMethodGET: {
                         self.task = [self.manager GET:self.url parameters:encodedParam progress:^(NSProgress *_Nonnull downloadProgress) {} success:^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            klogInDEBUG(@"网络请求成功:%d|Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            klogInDEBUG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject == nil) {
-                                kFAD(fadBLK, kErrorResponseNULL, nil);
+                                kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
                                 [self cacheSaveData:responseObject resp:task.response];
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                klogInDEBUG(@"网络请求整理数据:%d|Time:%.3f's|RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
                                 NSDictionary *userInfo = nil;
-                                if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                                    userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&userInfo];
+                                if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                                    userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), resp) : kSUC(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response , resp) : kBLK1(sucBLK, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            klogInDEBUG(@"网络请求失败(%d):%d|Time:%.3f's|ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
-                            kFAD(fadBLK, error, nil);
+                            klogInDEBUG(@"网络请求失败(%d):%d | Time:%.3f's | ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
+                            kBLK3(fadBLK, error, task.response, nil);
                             dispatch_semaphore_signal(sem);
                         }];
                         break;
                     }
                     case GLMethodPOST: {
                         self.task = [self.manager POST:self.url parameters:encodedParam progress:^(NSProgress *_Nonnull uploadProgress) {} success:^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            klogInDEBUG(@"网络请求成功:%d|Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            klogInDEBUG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject == nil) {
-                                kFAD(fadBLK, kErrorResponseNULL, nil);
+                                kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
                                 [self cacheSaveData:responseObject resp:task.response];
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                klogInDEBUG(@"网络请求整理数据:%d|Time:%.3f's|RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
                                 NSDictionary *userInfo = nil;
-                                if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                                    userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&userInfo];
+                                if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                                    userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), resp) : kSUC(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            klogInDEBUG(@"网络请求失败(%d):%d|Time:%.3f's|ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
-                            kFAD(fadBLK, error, nil);
+                            klogInDEBUG(@"网络请求失败(%d):%d | Time:%.3f's | ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
+                            kBLK3(fadBLK, error, task.response, nil);
                             dispatch_semaphore_signal(sem);
                         }];
                         break;
                     }
                     case GLMethodPUT: {
                         self.task = [self.manager PUT:self.url parameters:encodedParam success:^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            klogInDEBUG(@"网络请求成功:%d|Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            klogInDEBUG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject == nil) {
-                                kFAD(fadBLK, kErrorResponseNULL, nil);
+                                kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
                                 [self cacheSaveData:responseObject  resp:task.response];
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                klogInDEBUG(@"网络请求整理数据:%d|Time:%.3f's|RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
                                 NSDictionary *userInfo = nil;
-                                if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                                    userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&userInfo];
+                                if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                                    userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), resp) : kSUC(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            klogInDEBUG(@"网络请求失败(%d):%d|Time:%.3f's|ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
-                            kFAD(fadBLK, error, nil);
+                            klogInDEBUG(@"网络请求失败(%d):%d | Time:%.3f's | ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
+                            kBLK3(fadBLK, error, task.response, nil);
                             dispatch_semaphore_signal(sem);
                         }];
                         break;
                     }
                     case GLMethodDELETE: {
                         self.task = [self.manager DELETE:self.url parameters:encodedParam success:^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            klogInDEBUG(@"网络请求成功:%d|Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            klogInDEBUG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject == nil) {
-                                kFAD(fadBLK, kErrorResponseNULL, nil);
+                                kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
                                 [self cacheSaveData:responseObject  resp:task.response];
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                klogInDEBUG(@"网络请求整理数据:%d|Time:%.3f's|RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
                                 NSDictionary *userInfo = nil;
-                                if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                                    userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&userInfo];
+                                if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                                    userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), resp) : kSUC(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            klogInDEBUG(@"网络请求失败(%d):%d|Time:%.3f's|ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
-                            kFAD(fadBLK, error, nil);
+                            klogInDEBUG(@"网络请求失败(%d):%d | Time:%.3f's | ERR:%@",self.method, uniq, CACurrentMediaTime() - stTime, error);
+                            kBLK3(fadBLK, error, task.response, nil);
                             dispatch_semaphore_signal(sem);
                         }];
                         break;
@@ -454,10 +454,10 @@ static NSMutableSet *kAssociatedList;
                     id resp = [self analyResponse:cdata.data withResponse:cdata.response];
                     BOOL userFailure = NO;
                     NSDictionary *userInfo = nil;
-                    if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                        userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&userInfo];
+                    if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                        userFailure = ![self._config interceptWithURLResponse:cdata.response success:resp toUserFailedInfo:&userInfo];
                     }
-                    userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), resp) : kSUC(sucBLK, resp);
+                    userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK1(sucBLK, resp);
                     dispatch_semaphore_signal(sem);
                 }else{
                     // 无网 - 无缓存
@@ -465,15 +465,15 @@ static NSMutableSet *kAssociatedList;
             }
         }
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-        klogInDEBUG(@"网络请求完成:%d|Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
-        kCPT(complete);
+        klogInDEBUG(@"网络请求完成:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+        kBLK0(complete);
     };
     [self.queue addOperation:self.operation];
     
     return self;
 }
 /** 下载请求 */
-- (GLRequest *)writeToLocalPath:(NSString *)path resumeInfo:(NSData *)resumeData progress:(void (^)(uint64_t, uint64_t))progBLK success:(void (^)(id))sucBLK failure:(void (^)(NSError *, id))fadBLK complete:(void (^)(void))complete {
+- (GLRequest *)writeToLocalPath:(NSString *)path resumeInfo:(NSData *)resumeData progress:(void (^)(uint64_t, uint64_t))progBLK success:(void (^)(id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.url]];
     [req setTimeoutInterval:self._config.timeout];
     [req setAllHTTPHeaderFields:self._config.header];
@@ -487,37 +487,37 @@ static NSMutableSet *kAssociatedList;
             klogInDEBUG(@"网络请求(下载):%d | 恢复 | URL:%@", uniq, self.url);
             self.task = [self.manager downloadTaskWithResumeData:resumeData progress:^(NSProgress *_Nonnull downloadProgress) {
                 klogInDEBUG(@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
-                kFAD(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
+                kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
             } destination:^NSURL *_Nonnull (NSURL *_Nonnull targetPath, NSURLResponse *_Nonnull response) {
                 return [NSURL fileURLWithPath:path];
             } completionHandler:^(NSURLResponse *_Nonnull response, NSURL *_Nullable filePath, NSError *_Nullable error) {
                 klogInDEBUG(@"网络请求(下载):%d | 成功 | LOCAL:%@", uniq, filePath);
-                error ? kFAD(fadBLK, error, nil) : kSUC(sucBLK, response);
+                error ? kBLK3(fadBLK, error, response, nil) : kBLK1(sucBLK, response);
                 dispatch_semaphore_signal(sem);
             }];
         } else {
             klogInDEBUG(@"网络请求(下载):%d | 开始 | URL:%@", uniq, self.url);
             self.task = [self.manager downloadTaskWithRequest:req progress:^(NSProgress *_Nonnull downloadProgress) {
                 klogInDEBUG(@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
-                kFAD(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
+                kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
             } destination:^NSURL *_Nonnull (NSURL *_Nonnull targetPath, NSURLResponse *_Nonnull response) {
                 return [NSURL fileURLWithPath:path];
             } completionHandler:^(NSURLResponse *_Nonnull response, NSURL *_Nullable filePath, NSError *_Nullable error) {
                 klogInDEBUG(@"网络请求(下载):%d | 成功 | LOCAL:%@", uniq, filePath);
-                error ? kFAD(fadBLK, error, nil) : kSUC(sucBLK, response);
+                error ? kBLK3(fadBLK, error, response, nil) : kBLK1(sucBLK, response);
                 dispatch_semaphore_signal(sem);
             }];
         }
         [self.task resume];
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
         klogInDEBUG(@"网络请求(下载):%d | 完成 |  此次请求耗时:%.3f's", uniq, CACurrentMediaTime() - stTime);
-        kCPT(complete);
+        kBLK0(complete);
     };
     [self.queue addOperation:self.operation];
     return self;
 }
-/** 上传请求 fileData: @{FILE_TYPE , @{ FILE_NAME , FILE_DATA }} || @{ FILE_TYPE , FILE_DATA } */
-- (GLRequest *)readFromFileDatas:(NSDictionary<NSString *, id> *)fileDatas progress:(void (^)(float))progBLK success:(void (^)(id))sucBLK failure:(void (^)(NSError *, id))fadBLK complete:(void (^)(void))complete {
+
+- (GLRequest *)readFromFileDatas:(NSDictionary<NSString *, id> *)fileDatas progress:(void (^)(float))progBLK success:(void (^)(id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
@@ -528,19 +528,22 @@ static NSMutableSet *kAssociatedList;
         self.task = [self.manager POST:self.url parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
             for (NSString *key in [fileDatas allKeys]) {
                 if ([fileDatas[key] isKindOfClass:[NSDictionary class]]) {
-                    //                    带名字类型
+                    // 带名字类型
                     [formData appendPartWithFileData:[fileDatas[key] allValues].firstObject
                                                 name:key
                                             fileName:[fileDatas[key] allKeys].firstObject
                                             mimeType:@"multipart/form-data"];
                 } else if ([fileDatas[key] isKindOfClass:[NSData class]]) {
-                    //                    无名字类型
-                    [formData appendPartWithFileData:[fileDatas valueForKeyPath:key] name:key fileName:@"file" mimeType:@"multipart/form-data"];
+                    // 无名字类型
+                    [formData appendPartWithFileData:[fileDatas valueForKeyPath:key]
+                                                name:key
+                                            fileName:key
+                                            mimeType:@"multipart/form-data"];
                 }
             }
         } progress:^(NSProgress *_Nonnull uploadProgress) {
             klogInDEBUG(@"网络请求(上传):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
-            kSUC(progBLK, (double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+            kBLK1(progBLK, (double)uploadProgress.completedUnitCount/uploadProgress.totalUnitCount);
         } success:^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
             klogInDEBUG(@"网络请求(上传):%d | 成功 | RESP:%@", uniq, responseObject);
             /* 新解密方案 */
@@ -553,33 +556,31 @@ static NSMutableSet *kAssociatedList;
             }
             /* 正常流程 */
             if (responseObject == nil) {   //返回 空
-                kFAD(fadBLK, kErrorResponseNULL, nil);
+                kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
             } else {
                 BOOL userFailure = NO;
-                NSDictionary *customUserInfo = nil;
+                NSDictionary *userInfo = nil;
                 NSError *jsonError = nil;
                 // string -> dictionary
-                id resp = [NSJSONSerialization JSONObjectWithData:[responseObject dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&jsonError];
-                // user 2 failed
-                if ([self._config respondsToSelector:@selector(invocationAfterRequestWS:success:toUserFailedInfo:)]) {
-                    userFailure = ![self._config invocationAfterRequestWS:self._wsvsname != nil ? self._wsvsname : self._path success:resp toUserFailedInfo:&customUserInfo];
+                id resp = [self analyResponse:responseObject withResponse:task.response];
+                if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
+                    userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                 }
-                
                 if (jsonError != nil) {    // to dictionary Failed
-                    kFAD(fadBLK, kErrorResponseNonEncode, nil);
+                    kBLK3(fadBLK, kErrorResponseNonEncode, task.response, nil);
                 } else {  // to dictionary Success
-                    userFailure ? kFAD(fadBLK, kErrorCustomUserInfo(customUserInfo,responseObject), resp) : kSUC(sucBLK, resp);
+                    userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
                 }
             }
             dispatch_semaphore_signal(sem);
         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
             klogInDEBUG(@"网络请求(上传):%d | 失败 | ERR:%@", uniq, error);
-            kFAD(fadBLK, error, nil);
+            kBLK3(fadBLK, error, task.response, nil);
             dispatch_semaphore_signal(sem);
         }];
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
         klogInDEBUG(@"网络请求(上传):%d | 完成 | 共耗时:%.3f's", uniq, CACurrentMediaTime() - stTime);
-        kCPT(complete);
+        kBLK0(complete);
     };
     [self.queue addOperation:self.operation];
     return self;
