@@ -45,7 +45,7 @@ Pod::Spec.new do |s|
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-   s.frameworks = 'SystemConfiguration.framework'
+   s.frameworks = 'SystemConfiguration'
    s.dependency 'AFNetworking', '3.2.1'
 #   s.dependency 'MMKV', '1.0.17'
 end
