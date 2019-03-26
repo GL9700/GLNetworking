@@ -24,6 +24,7 @@ typedef NS_ENUM(uint , GLNetMethod) {
 @class AFSecurityPolicy;
 
 @interface GLRequest:NSObject
+@property (nonatomic , assign) BOOL netStatus;
 @property (nonatomic , strong) AFHTTPSessionManager *manager;
 @property (nonatomic , assign) GLNetMethod method;  // post | get
 @property (nonatomic , strong) AFSecurityPolicy *security;

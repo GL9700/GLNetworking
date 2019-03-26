@@ -17,14 +17,13 @@ typedef BOOL(^BLKIsOnline)(void);
 @property (nonatomic, strong) NSSet *cacheList;    // 缓存名单
 @property (nonatomic, assign) NSUInteger timeout;  // 超时
 @property (nonatomic, strong) NSDictionary *header;    // 请求头
-@property (nonatomic, strong) BLKIsOnline blkIsOnline;
 @optional
 /** 编码方案 | params:原始参数 | encodeKey:编码key(优先使用WebServiceName,WS为空后使用path)| */
 - (NSDictionary *)paramsProcessedWithOriginParams:(NSDictionary *)params WebServiceName:(NSString *)wsn;
 /** 解密方案 | */
 - (id)responseObjectForResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError **)error;
 /**
- * 请求成功后进行拦截调用
+ * 请求成功后进行拦截调用(此方法中并不建议调用UI相关操作，如需调用需在主线程)
  * @return YES:继续返回成功 NO:拦截处理返回失败 |
  * @param webserviceORpath :webservice或path , 优先webservice
  * @param response :请求数据

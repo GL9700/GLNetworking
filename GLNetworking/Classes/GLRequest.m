@@ -8,6 +8,7 @@
 #import "GLRequest.h"
 #import "GLCacheData.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 
 #define weak(o) autoreleasepool {} __weak typeof(o)o ## Weak = o;
 #define strong(o) autoreleasepool {} __strong typeof(o)o = o ## Weak;
@@ -158,15 +159,8 @@ static NSMutableSet *kAssociatedList;
 }
 
 #pragma mark- Actions
-/** 取当前网络状态 */
-- (BOOL)currentIsOnline {
-    BOOL currentOnline = YES;
-    if([self._config respondsToSelector:@selector(blkIsOnline)] && self._config.blkIsOnline!=nil){
-        currentOnline = self._config.blkIsOnline();
-    }
-    klogInDEBUG(@"网络状态:%@", currentOnline?@"Online":@"Offline");
-    return currentOnline;
-}
+
+
 /** https */
 - (void)securityPolicy {
     self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -230,8 +224,12 @@ static NSMutableSet *kAssociatedList;
     if(_URLhash==nil){
         NSMutableString *value = [NSMutableString stringWithFormat:@"%d", self.method];
         [value appendString:self._path?[NSString stringWithFormat:@"|%@", self._path]:@""];
-        if(self._params){[value appendString:[self jsonFromDictionary:self._params]];}
-        if(self._config.header){[value appendString:[self jsonFromDictionary:self._config.header]];}
+        self._params?[value appendString:[self jsonFromDictionary:self._params]]:nil;
+        /**
+         因为云学堂头中的UserKey每次启动都变甚至第一次还为空，所以暂时取消头内容的合并
+         产生的问题：不同用户登陆，无法区分
+         */
+//        self._config.header?[value appendString:[self jsonFromDictionary:self._config.header]]:nil;
         _URLhash = [value md5];
     }
     return _URLhash;
@@ -297,9 +295,12 @@ static NSMutableSet *kAssociatedList;
         return cdata;
     NSString *path = [self.cacheFolder stringByAppendingPathComponent:self.URLhash];
     if([[NSFileManager defaultManager] fileExistsAtPath:path]){
+        klogInDEBUG(@"找到缓存的文件");
         cdata = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
+    }else{
+        klogInDEBUG(@"没找到缓存的文件");
     }
-    klogInDEBUG(@"从缓存中读取:%@" ,cdata!=nil?@"SUC":@"FAD");
+    klogInDEBUG(@"从缓存中读取:URL:%@|LocalPath:%@|REL:%@" ,self.url, path ,cdata!=nil?@"SUC":@"FAD");
     return cdata;
 }
 - (void)cacheDelete {
@@ -332,8 +333,9 @@ static NSMutableSet *kAssociatedList;
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
         
         BOOL containerSelf = [self cacheContainInAccociatedList];
-        if(containerSelf && self->ignoreCache==YES)   // 找到关联关系
+        if(containerSelf && self->ignoreCache==NO)   // 找到关联关系 并且不忽略缓存
         {
+            klogInDEBUG(@"网络请求状态:%d | Online:Yes | hasCache:Yes | -- use Cache", uniq);
             GLCacheData *cdata = [self cacheLoadData];
             id resp = [self analyResponse:cdata.data withResponse:cdata.response];
             BOOL userFailure = NO;
@@ -346,7 +348,9 @@ static NSMutableSet *kAssociatedList;
         }
         else    // 不存在关联关系
         {
-            if([self currentIsOnline]){
+            if([self netStatus])
+            {
+                klogInDEBUG(@"网络请求状态:%d | Online:Yes | hasCache:~ | -- ignore Cache", uniq);
                 klogInDEBUG(@"网络请求开始(%d):%d | URL:%@ | path:%@ | params:%@",self.method, uniq, self.url, self._path, self._params);
                 switch (self.method) {
                     case GLMethodGET: {
@@ -450,6 +454,7 @@ static NSMutableSet *kAssociatedList;
                 // 强制查找缓存
                 GLCacheData *cdata = [self cacheLoadData];
                 if(cdata!=nil){
+                    klogInDEBUG(@"网络请求状态:%d | Online:No | hasCache:Yes | -- use Cache", uniq);
                     [self cacheAddToAccociatedList];
                     id resp = [self analyResponse:cdata.data withResponse:cdata.response];
                     BOOL userFailure = NO;
@@ -460,6 +465,8 @@ static NSMutableSet *kAssociatedList;
                     userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK1(sucBLK, resp);
                     dispatch_semaphore_signal(sem);
                 }else{
+                    klogInDEBUG(@"网络请求状态:%d | Online:No | hasCache:No | -- no Data", uniq);
+                    dispatch_semaphore_signal(sem);
                     // 无网 - 无缓存
                 }
             }
@@ -469,7 +476,6 @@ static NSMutableSet *kAssociatedList;
         kBLK0(complete);
     };
     [self.queue addOperation:self.operation];
-    
     return self;
 }
 /** 下载请求 */

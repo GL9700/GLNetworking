@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '1.1.1'
+  s.version          = '1.1.2'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -20,6 +20,7 @@ Pod::Spec.new do |s|
   s.description      = 'A simple of Networking.
   History Version:
     > 1.1
+    	* 2 remove JSONString(config.head) from  MD5 rule
         * 1 detail with upload Request
         * 0 add customList for cache
     > 0.2
@@ -44,7 +45,7 @@ Pod::Spec.new do |s|
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
+   s.frameworks = 'SystemConfiguration.framework'
    s.dependency 'AFNetworking', '3.2.1'
 #   s.dependency 'MMKV', '1.0.17'
 end
