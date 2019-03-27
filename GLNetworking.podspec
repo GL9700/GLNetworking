@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '1.1.2'
+  s.version          = '1.1.3'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -20,6 +20,7 @@ Pod::Spec.new do |s|
   s.description      = 'A simple of Networking.
   History Version:
     > 1.1
+    	* 3 fix Logic in No Net & No CacheData --> return NetFailed
     	* 2 remove JSONString(config.head) from  MD5 rule
         * 1 detail with upload Request
         * 0 add customList for cache

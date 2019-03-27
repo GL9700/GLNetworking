@@ -24,9 +24,8 @@ typedef BOOL(^BLKIsOnline)(void);
 - (id)responseObjectForResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError **)error;
 /**
  * 请求成功后进行拦截调用(此方法中并不建议调用UI相关操作，如需调用需在主线程)
- * @return YES:继续返回成功 NO:拦截处理返回失败 |
- * @param webserviceORpath :webservice或path , 优先webservice
- * @param response :请求数据
+ * @return YES :继续返回成功 NO:拦截处理返回失败 |
+ * @param data :服务器返回数据
  * @param userInfo :自定义failed Error UserInfo 内容
  * 如果没有进行设置则网络请求是以请求后网络作为判定
  */

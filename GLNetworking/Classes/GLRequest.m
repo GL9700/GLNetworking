@@ -466,6 +466,8 @@ static NSMutableSet *kAssociatedList;
                     dispatch_semaphore_signal(sem);
                 }else{
                     klogInDEBUG(@"网络请求状态:%d | Online:No | hasCache:No | -- no Data", uniq);
+                    NSURLResponse *eresp = [[NSHTTPURLResponse alloc]initWithURL:[NSURL URLWithString:self.url] statusCode:1001 HTTPVersion:nil headerFields:nil];
+                    kBLK3(fadBLK, [NSError errorWithDomain:@"无网-无Cache数据" code:30010 userInfo:nil], eresp, nil);
                     dispatch_semaphore_signal(sem);
                     // 无网 - 无缓存
                 }
