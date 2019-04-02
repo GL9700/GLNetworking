@@ -13,7 +13,6 @@ static NSMutableSet *list;
 static id<GLNetworkPotocol> globalConfig;
 static AFHTTPSessionManager *manager;
 static NSOperationQueue *requestQueue;
-static BOOL statusForOnline;
 
 @implementation GLNetworking
 
@@ -22,7 +21,6 @@ static BOOL statusForOnline;
     static GLNetworking *instance;
     dispatch_once(&onceToken, ^{
         instance = [[GLNetworking alloc]init];
-        [instance installNetStatus];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
         if([config respondsToSelector:@selector(supJSONReq)]){
@@ -37,19 +35,12 @@ static BOOL statusForOnline;
     return instance;
 }
 
-- (void)installNetStatus {
++ (BOOL)currentNetStatus {
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "www.baidu.com");
     SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
-    statusForOnline = (flags!=0);
-    NSLog(@"1");
+    return (flags!=0);
 }
-
-///** NetStatus */
-//static void reachabilityCallBack(SCNetworkReachabilityRef ref , SCNetworkReachabilityFlags flags ,void *info){
-//    statusForOnline = (flags!=0);
-//}
-
 
 + (NSMutableSet *)list {
     if(list==nil) {
@@ -61,7 +52,7 @@ static BOOL statusForOnline;
 + (GLRequest *)createRequest {
     /** 思路:改用NSOperationQueue 来控制最大并发数 */
     GLRequest *request = [[GLRequest alloc]initWithQueue:requestQueue];
-    request.netStatus = statusForOnline;
+    request.netStatus = [GLNetworking currentNetStatus];
     request.manager = manager;
     @synchronized ([GLNetworking list]) {
         [[GLNetworking list] addObject:request];

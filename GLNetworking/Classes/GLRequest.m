@@ -225,11 +225,7 @@ static NSMutableSet *kAssociatedList;
         NSMutableString *value = [NSMutableString stringWithFormat:@"%d", self.method];
         [value appendString:self._path?[NSString stringWithFormat:@"|%@", self._path]:@""];
         self._params?[value appendString:[self jsonFromDictionary:self._params]]:nil;
-        /**
-         因为云学堂头中的UserKey每次启动都变甚至第一次还为空，所以暂时取消头内容的合并
-         产生的问题：不同用户登陆，无法区分
-         */
-//        self._config.header?[value appendString:[self jsonFromDictionary:self._config.header]]:nil;
+        self._config.header?[value appendString:[self jsonFromDictionary:self._config.header]]:nil;
         _URLhash = [value md5];
     }
     return _URLhash;
