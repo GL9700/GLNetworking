@@ -45,7 +45,7 @@
 		B4C7B543C4543A80A3043F3537E13745 /* AFNetworking-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 05761CCB611701B6BA5DEE1F75E9B122 /* AFNetworking-dummy.m */; };
 		C6E4AFFCF5DFEBEA9619B9ECBB505236 /* UIImage+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = C8A78D49589452B04F7A3F5419EEA4AF /* UIImage+AFNetworking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C98721120AA130804106F8DE44DCA31A /* UIButton+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 78B2EA0B16B4E4268D7667C9B310AD91 /* UIButton+AFNetworking.m */; };
-		CA277C132150EE4E00E15369 /* GLNetworkPotocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CA277C122150EE4E00E15369 /* GLNetworkPotocol.h */; };
+		CA62B8A422C47387006C9B7A /* GLNetworkPotocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CA62B8A322C47387006C9B7A /* GLNetworkPotocol.h */; };
 		CAD614C557E87939DA2B205FA0F4C449 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = EB4B8D1DFD66A5C45464248F934946B3 /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D300575510C95C1B143422392CE52070 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D795E79B4697FA47B8D4F525C216D70 /* AFNetworkReachabilityManager.m */; };
 		D9181CB3A4DEDF522AB34042F4680603 /* GLNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DAC647BA6E3F2C84AAEED8A969B7655 /* GLNetworking.m */; };
@@ -133,7 +133,7 @@
 		B68924685B416A80E496FA40B6A1D2E5 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFURLResponseSerialization.m; path = AFNetworking/AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		C00CB3CCB2C9782445D7F33DFFA5B166 /* libPods-GLNetworking_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GLNetworking_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8A78D49589452B04F7A3F5419EEA4AF /* UIImage+AFNetworking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+AFNetworking.h"; path = "UIKit+AFNetworking/UIImage+AFNetworking.h"; sourceTree = "<group>"; };
-		CA277C122150EE4E00E15369 /* GLNetworkPotocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLNetworkPotocol.h; path = GLNetworking/Classes/GLNetworkPotocol.h; sourceTree = "<group>"; };
+		CA62B8A322C47387006C9B7A /* GLNetworkPotocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLNetworkPotocol.h; path = GLNetworking/Classes/GLNetworkPotocol.h; sourceTree = "<group>"; };
 		CFBBDBACFAC548DD6DA18E59E6F6DBD0 /* Pods-GLNetworking_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-GLNetworking_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		D823E19573FB873550351680D7D6D032 /* AFNetworking.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = AFNetworking.xcconfig; sourceTree = "<group>"; };
 		D8F598AD4138BACDC982D936A3E00714 /* UIActivityIndicatorView+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIActivityIndicatorView+AFNetworking.m"; path = "UIKit+AFNetworking/UIActivityIndicatorView+AFNetworking.m"; sourceTree = "<group>"; };
@@ -242,7 +242,7 @@
 			children = (
 				332BEEC523C1A8B4CAE1D121E68D8976 /* GLNetworking.h */,
 				0DAC647BA6E3F2C84AAEED8A969B7655 /* GLNetworking.m */,
-				CA277C122150EE4E00E15369 /* GLNetworkPotocol.h */,
+				CA62B8A322C47387006C9B7A /* GLNetworkPotocol.h */,
 				0ACEEE54229E9949383D339C465007CF /* GLRequest.h */,
 				E2771F9EF2B3CD1FC07CC361036D29FF /* GLRequest.m */,
 				37B20D1C679399A6C166BBC4B513A8D1 /* GLOperation.h */,
@@ -397,6 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F15F570B42C938D99C486DF770F7600 /* GLNetworking.h in Headers */,
+				CA62B8A422C47387006C9B7A /* GLNetworkPotocol.h in Headers */,
 				0B35D3593C4B589C3618F722F9FE6280 /* GLOperation.h in Headers */,
 				8304D14E13595A8B5199FA27D2292EC8 /* GLRequest.h in Headers */,
 			);
@@ -411,7 +412,6 @@
 				3222DC27D07E09F14C5AF5093C2BBA9E /* AFHTTPSessionManager.h in Headers */,
 				EC4CA3E90D2E68CEB1A16146BA5DF58B /* AFImageDownloader.h in Headers */,
 				CAD614C557E87939DA2B205FA0F4C449 /* AFNetworkActivityIndicatorManager.h in Headers */,
-				CA277C132150EE4E00E15369 /* GLNetworkPotocol.h in Headers */,
 				AACE3143D5979498634D88F2825A5835 /* AFNetworking.h in Headers */,
 				8C25C902AEF7C1B06FE471BE69026EF2 /* AFNetworkReachabilityManager.h in Headers */,
 				36B6A108F6DA30A5D65A92A2A2C88DB6 /* AFSecurityPolicy.h in Headers */,
@@ -507,6 +507,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;

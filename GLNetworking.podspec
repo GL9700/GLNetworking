@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '1.1.4'
+  s.version          = '2.0.0'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -19,6 +19,9 @@ Pod::Spec.new do |s|
 
   s.description      = 'A simple of Networking.
   History Version:
+    > 2.0
+      * 0 move from Github to Private GitLab Server && pod update
+
     > 1.1
       * 4 fix online status only invoke once, fix to invoke at check NetStatus time
     	* 3 fix Logic in No Net & No CacheData --> return NetFailed
@@ -31,11 +34,11 @@ Pod::Spec.new do |s|
         * 4 add PUT DELETE request Method;
         * 2 add function : download allow resume use [.supportResume(YES)] , default is NO;
     '
-  s.homepage         = 'https://github.com/GL9700/GLNetworking'
+  s.homepage         = 'http://gitlab.wdcloud.cc:10080/iosbase/GLNetworking'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'liguoliang' => '36617161@qq.com' }
-  s.source           = { :git => 'https://github.com/GL9700/GLNetworking.git', :tag => s.version.to_s }
+  s.author           = { 'liguoliang' => 'guoliang@51jianjiao.com' }
+  s.source           = { :git => 'http://gitlab.wdcloud.cc:10080/iosbase/GLNetworking.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
@@ -48,6 +51,6 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
    s.frameworks = 'SystemConfiguration'
-   s.dependency 'AFNetworking', '3.2.1'
+   s.dependency 'AFNetworking', '3.2.0'
 #   s.dependency 'MMKV', '1.0.17'
 end
