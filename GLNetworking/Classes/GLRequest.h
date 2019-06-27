@@ -55,7 +55,7 @@ typedef NS_ENUM(uint , GLNetMethod) {
 
 @interface GLRequest(RequestExt)
 /** 数据请求 */
-- (GLRequest *)success:(void(^)(id response))sucBLK
+- (GLRequest *)success:(void(^)(NSURLResponse *header, id response))sucBLK
                failure:(void(^)(NSError *error, NSURLResponse *response, id data))fadBLK
               complete:(void(^)(void))complete;
 /** 下载请求 */

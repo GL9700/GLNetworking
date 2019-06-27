@@ -11,13 +11,15 @@ typedef BOOL(^BLKIsOnline)(void);
 
 @protocol GLNetworkPotocol <NSObject>
 @required
-@property (nonatomic, assign) BOOL isDebug;    // YES 输出debug信息
-@property (nonatomic, strong) NSString *host;  //host地址
-@property (nonatomic, assign) BOOL supJSONReq; //  是否使用JSON格式进行body传递（默认NO）JsonSerializer
-@property (nonatomic, strong) NSSet *cacheList;    // 缓存名单
-@property (nonatomic, assign) NSUInteger timeout;  // 超时
-@property (nonatomic, strong) NSDictionary *header;    // 请求头
+@property (nonatomic, strong) NSString *host;           //host地址
+@property (nonatomic, assign) NSUInteger timeout;       // 超时
+@property (nonatomic, strong) NSDictionary *header;     // 请求头
+
 @optional
+@property (nonatomic, assign) BOOL isDebug;             // YES 输出debug信息
+@property (nonatomic, assign) BOOL supJSONReq;          // 是否使用JSON格式进行body传递（默认NO）JsonSerializer
+@property (nonatomic, strong) NSSet *cacheList;         // 缓存名单
+
 /** 编码方案 | params:原始参数 | encodeKey:编码key(优先使用WebServiceName,WS为空后使用path)| */
 - (NSDictionary *)paramsProcessedWithOriginParams:(NSDictionary *)params WebServiceName:(NSString *)wsn;
 /** 解密方案 | */

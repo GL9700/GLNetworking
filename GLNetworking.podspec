@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.description      = 'A simple of Networking.
   History Version:
     > 2.0
-      * 0 move from Github to Private GitLab Server && pod update
+      * 0 move from Github to Private GitLab Server && pod update, add response header
 
     > 1.1
       * 4 fix online status only invoke once, fix to invoke at check NetStatus time

@@ -314,7 +314,7 @@ static NSMutableSet *kAssociatedList;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wconditional-type-mismatch"
 /** 数据请求 */
-- (GLRequest *)success:(void (^)(id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
+- (GLRequest *)success:(void (^)(NSURLResponse *, id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
     NSDictionary *encodedParam;
     
     /** 编码参数 webService 优先 */
@@ -339,7 +339,7 @@ static NSMutableSet *kAssociatedList;
             if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
                 userFailure = ![self._config interceptWithURLResponse:cdata.response success:resp toUserFailedInfo:&userInfo];
             }
-            userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK1(sucBLK, resp);
+            userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK2(sucBLK, cdata.response, resp);
             dispatch_semaphore_signal(sem);
         }
         else    // 不存在关联关系
@@ -363,7 +363,7 @@ static NSMutableSet *kAssociatedList;
                                 if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
                                     userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response , resp) : kBLK1(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response , resp) : kBLK2(sucBLK, task.response, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
@@ -387,7 +387,7 @@ static NSMutableSet *kAssociatedList;
                                 if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
                                     userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK2(sucBLK, task.response, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
@@ -411,7 +411,7 @@ static NSMutableSet *kAssociatedList;
                                 if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
                                     userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK2(sucBLK, task.response, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
@@ -435,7 +435,7 @@ static NSMutableSet *kAssociatedList;
                                 if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
                                     userFailure = ![self._config interceptWithURLResponse:task.response success:resp toUserFailedInfo:&userInfo];
                                 }
-                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK1(sucBLK, resp);
+                                userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,responseObject), task.response, resp) : kBLK2(sucBLK, task.response, resp);
                             }
                             dispatch_semaphore_signal(sem);
                         } failure:^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
@@ -458,7 +458,7 @@ static NSMutableSet *kAssociatedList;
                     if([self._config respondsToSelector:@selector(interceptWithURLResponse:success:toUserFailedInfo:)]) {
                         userFailure = ![self._config interceptWithURLResponse:cdata.response success:resp toUserFailedInfo:&userInfo];
                     }
-                    userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK1(sucBLK, resp);
+                    userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK2(sucBLK, cdata.response, resp);
                     dispatch_semaphore_signal(sem);
                 }else{
                     klogInDEBUG(@"网络请求状态:%d | Online:No | hasCache:No | -- no Data", uniq);
