@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="whP-gf-Uak">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="whP-gf-Uak">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -22,58 +22,67 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RwB-2A-gEM">
-                                <rect key="frame" x="127" y="120" width="121" height="97"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="开始GET网络请求"/>
+                                <rect key="frame" x="16" y="40" width="161.5" height="30"/>
+                                <color key="backgroundColor" red="0.1843137255" green="0.46666666670000001" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Ybn-Qe-QyV"/>
+                                </constraints>
+                                <state key="normal" title="GET请求">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
                                 <connections>
                                     <action selector="onClickGETRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="Udd-0X-sS5"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DYS-Rm-pjB">
+                                <rect key="frame" x="16" y="352" width="343" height="295"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="输出信息：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VOS-6j-rHA">
+                                <rect key="frame" x="16" y="325" width="60" height="17"/>
+                                <fontDescription key="fontDescription" name="PingFangSC-Medium" family="PingFang SC" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9tG-91-NpK">
-                                <rect key="frame" x="121.5" y="237" width="132" height="96.5"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="开始POST网络请求"/>
+                                <rect key="frame" x="197.5" y="40" width="161.5" height="30"/>
+                                <color key="backgroundColor" red="0.1843137255" green="0.46666666670000001" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="3nf-Yr-m6N"/>
+                                </constraints>
+                                <state key="normal" title="POST请求">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
                                 <connections>
                                     <action selector="onClickPOSTRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="kP7-fG-rsa"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YCQ-Ut-4he">
-                                <rect key="frame" x="126" y="353.5" width="123" height="97"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="开始下载网络请求"/>
-                                <connections>
-                                    <action selector="onClickDownloadRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="MCm-AQ-HuC"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xwc-pW-Xh1">
-                                <rect key="frame" x="126" y="470.5" width="123" height="96.5"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="开始上传网络请求"/>
-                                <connections>
-                                    <action selector="onClickUploadRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="m2S-c1-4FN"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="YCQ-Ut-4he" firstAttribute="top" secondItem="9tG-91-NpK" secondAttribute="bottom" constant="20" id="Bff-5k-14M"/>
-                            <constraint firstItem="9tG-91-NpK" firstAttribute="height" secondItem="YCQ-Ut-4he" secondAttribute="height" id="Ddb-al-NGF"/>
-                            <constraint firstItem="YCQ-Ut-4he" firstAttribute="height" secondItem="xwc-pW-Xh1" secondAttribute="height" id="Hvg-JP-jrt"/>
-                            <constraint firstItem="9tG-91-NpK" firstAttribute="centerX" secondItem="TpU-gO-2f1" secondAttribute="centerX" id="MJU-sD-C9a"/>
-                            <constraint firstItem="xwc-pW-Xh1" firstAttribute="centerX" secondItem="TpU-gO-2f1" secondAttribute="centerX" id="OQy-Yl-4pV"/>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" constant="100" id="ZlZ-kk-1Vq"/>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="height" secondItem="9tG-91-NpK" secondAttribute="height" id="a89-Yd-9h9"/>
-                            <constraint firstItem="YCQ-Ut-4he" firstAttribute="centerX" secondItem="TpU-gO-2f1" secondAttribute="centerX" id="cj5-4P-3V6"/>
-                            <constraint firstItem="xwc-pW-Xh1" firstAttribute="top" secondItem="YCQ-Ut-4he" secondAttribute="bottom" constant="20" id="ctF-aZ-tjC"/>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="centerX" secondItem="TpU-gO-2f1" secondAttribute="centerX" id="gLj-Wg-HTz"/>
-                            <constraint firstItem="9tG-91-NpK" firstAttribute="top" secondItem="RwB-2A-gEM" secondAttribute="bottom" constant="20" id="jhz-a9-nnk"/>
-                            <constraint firstItem="Mvr-aV-6Um" firstAttribute="top" secondItem="xwc-pW-Xh1" secondAttribute="bottom" constant="100" id="tTN-pg-Mw5"/>
+                            <constraint firstItem="RwB-2A-gEM" firstAttribute="width" secondItem="9tG-91-NpK" secondAttribute="width" id="EMA-OA-ptS"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="9tG-91-NpK" secondAttribute="trailing" id="NcZ-GC-lzv"/>
+                            <constraint firstItem="VOS-6j-rHA" firstAttribute="leading" secondItem="DYS-Rm-pjB" secondAttribute="leading" id="Oov-jQ-0Lh"/>
+                            <constraint firstItem="9tG-91-NpK" firstAttribute="leading" secondItem="RwB-2A-gEM" secondAttribute="trailing" constant="20" id="Tfm-9M-lz9"/>
+                            <constraint firstItem="DYS-Rm-pjB" firstAttribute="top" secondItem="VOS-6j-rHA" secondAttribute="bottom" constant="10" id="UfB-2Y-LIr"/>
+                            <constraint firstItem="DYS-Rm-pjB" firstAttribute="trailing" secondItem="TpU-gO-2f1" secondAttribute="trailingMargin" id="W8e-Yc-HnQ"/>
+                            <constraint firstItem="RwB-2A-gEM" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="aBR-gy-KCK"/>
+                            <constraint firstItem="RwB-2A-gEM" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" constant="20" id="at9-KN-gQR"/>
+                            <constraint firstItem="DYS-Rm-pjB" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="ifO-oG-46K"/>
+                            <constraint firstItem="Mvr-aV-6Um" firstAttribute="top" secondItem="DYS-Rm-pjB" secondAttribute="bottom" constant="20" id="jz1-T8-Lq4"/>
+                            <constraint firstItem="RwB-2A-gEM" firstAttribute="centerY" secondItem="9tG-91-NpK" secondAttribute="centerY" id="l2r-Z4-Svu"/>
+                            <constraint firstItem="VOS-6j-rHA" firstAttribute="centerY" secondItem="TpU-gO-2f1" secondAttribute="centerY" id="lVI-aH-Mjc"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="outputTextView" destination="DYS-Rm-pjB" id="3j8-7Z-iAP"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tc2-Qw-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="305" y="433"/>
+            <point key="canvasLocation" x="304.80000000000001" y="432.23388305847078"/>
         </scene>
     </scenes>
 </document>

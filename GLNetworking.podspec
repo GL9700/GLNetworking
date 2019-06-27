@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '0.2.7'
-  s.summary          = 'Just Networking.'
+  s.version          = '1.0.0'
+  s.summary          = 'Just Networking for WD.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -22,12 +22,13 @@ Pod::Spec.new do |s|
     0.2.4 add PUT DELETE request Method;
     0.2.5 add custom body format in protocal use requestJSONSerializer
     0.2.7 fix timeout not valid [bug has in 0.2.5 ~ 0.2.6]
+    1.0.0 Move Project to Private GitLab Server
     '
-  s.homepage         = 'https://github.com/GL9700/GLNetworking'
+  s.homepage         = 'http://gitlab.wdcloud.cc:10080/iosbase/GLNetworking'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'liguoliang' => '36617161@qq.com' }
-  s.source           = { :git => 'https://github.com/GL9700/GLNetworking.git', :tag => s.version.to_s }
+  s.source           = { :git => 'http://gitlab.wdcloud.cc:10080/iosbase/GLNetworking.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
