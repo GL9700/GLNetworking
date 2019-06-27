@@ -13,15 +13,24 @@
 
 #import "GLViewController.h"
 #import <GLNetworking.h>
+#import <GLNetworkPotocol.h>
 
 
-@interface NetworkingConfig : NSObject<GLNetworkProtocol>
+@interface NetworkingConfig : NSObject<GLNetworkPotocol>
 
 @end
 
 @implementation NetworkingConfig
-
-
+@synthesize host, header, timeout, isDebug;
+- (instancetype)init {
+    if((self = [super init])) {
+        host = @"https://www.apiopen.top";
+        timeout = 10;
+        header = @{};
+        isDebug = YES;
+    }
+    return self;
+}
 @end
 
 
@@ -34,13 +43,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [GLNetworking managerWithConfig:[NetworkingConfig new]];
 }
 
-- (void)oLog:(NSString *)log {
+- (void)oLog:(id)log {
     if(self.output==nil){
         self.output = [NSMutableString string];
     }
-    [self.output appendString:log];
+    [self.output appendString:[log description]];
     self.outputTextView.text = self.output;
 }
 - (void)clearLog {
@@ -53,12 +63,15 @@
     NSMutableDictionary *params = [@{} mutableCopy];
     params[@"city"] = @"北京";
     [self oLog:@"------------Start------------"];
-    [GLNetworking.GET().params(params).path(path) success:^(id response) {
+    [GLNetworking.GET().params(params).path(path) success:^(NSURLResponse *header, id response) {
+        [self oLog:@"\n\n*** *** Response Head *** ***\n"];
+        [self oLog:((NSHTTPURLResponse *)header).allHeaderFields];
+        [self oLog:@"\n\n*** *** Response Data *** ***\n"];
         [self oLog:response];
-    } failure:^(NSError *error, id response) {
+    } failure:^(NSError *error, NSURLResponse *response, id data) {
         [self oLog:[NSString stringWithFormat:@"Response:%@\n--Error--:\nCode:%ld\ndomain:%@\nuserInfo:%@", response, (long)error.code, error.domain, error.userInfo] ];
     } complete:^{
-        [self oLog:@"------------End------------"];
+        [self oLog:@"\n\n------------End------------\n\n"];
     }];
 }
 
@@ -67,13 +80,15 @@
     NSString *path = @"weatherApi";
     NSMutableDictionary *params = [@{} mutableCopy];
     params[@"city"] = @"北京";
-    [self oLog:@"------------Start------------"];
-    [GLNetworking.POST().params(params).path(path) success:^(id response) {
+    [self oLog:@"------------Start------------\n"];
+    [GLNetworking.POST().params(params).path(path) success:^(NSURLResponse *header, id response) {
+        [self oLog:((NSHTTPURLResponse *)header).allHeaderFields];
+        [self oLog:@"\n-------------\n"];
         [self oLog:response];
-    } failure:^(NSError *error, id response) {
+    } failure:^(NSError *error, NSURLResponse *response, id data) {
         [self oLog:[NSString stringWithFormat:@"Response:%@\n--Error--:\nCode:%ld\ndomain:%@\nuserInfo:%@", response, (long)error.code, error.domain, error.userInfo] ];
     } complete:^{
-        [self oLog:@"------------End------------"];
+        [self oLog:@"------------End------------\n"];
     }];
 }
 
