@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.1.0'
+  s.version          = '2.1.1'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -20,8 +20,9 @@ Pod::Spec.new do |s|
   s.description      = 'A simple of Networking.
   History Version:
     > 2.0
-      * 1 add GraphQL support
       * 0 move from Github to Private GitLab Server && pod update, add response header
+      * 1 add GraphQL support
+        * 1 fix: methodName for head
 
     > 1.1
       * 4 fix online status only invoke once, fix to invoke at check NetStatus time
