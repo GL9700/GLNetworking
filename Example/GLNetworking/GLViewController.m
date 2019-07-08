@@ -93,8 +93,15 @@
     }];
 }
 - (IBAction)onClickGraphQLQuery:(UIButton *)sender {
+    GLUser *user = [GLUser new];
+    user.seminarInfoId = @"200";
+    user.name = @"abc";
+    user.age = 10;
+    
     NSString *path = @"graphql";
-    NSString *pString = [GLUser gQueryStringWithMethod:@"user(id: Long!): User!" params:nil returns:@[@"name",@"age"]];
+    NSString *pString = [user gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo"
+                                              params:@{@"seminarInfoId":user.seminarInfoId}
+                                             returns:@[@"name"]];
     [GLNetworking.POST().customURL(@"http://192.168.9.140:8080").params(pString).path(path) success:^(NSURLResponse *header, id response) {
         NSLog(@"--suc--");
     } failure:^(NSError *error, NSURLResponse *response, id data) {

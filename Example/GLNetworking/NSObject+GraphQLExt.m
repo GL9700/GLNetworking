@@ -8,14 +8,33 @@
 
 #import "NSObject+GraphQLExt.h"
 #import <objc/message.h>
-#import <NSObject+Extension.h>
+#import <YYModel.h>
 
 @implementation NSObject (GraphQLExt)
-- (NSString *)gQueryStringWithMethod:(NSString *)method params:(NSDictionary *)params returns:(NSArray<NSString *> *)returns {
-    NSString *matrix = @"{\"query\":\"query {%@(%@)}}\"}";
-    NSString *value = [self JSONString];
-    NSString *result = @"";
+/*
+ matrix:
+ seminar_view(seminarInfoId:ID!):SeminarInfo ----- {"query":"query {<methodName><(paramString)><{rtn}>}"}
+ */
+- (NSString *)gQueryStringWithMethod:(NSString *)method params:(NSDictionary<NSString *, NSObject *> *)params returns:(NSArray<NSString *> *)returns {
+    NSString *matrix = @"{\"query\":\"query {%@%@%@}\"}";
+    NSString *methodName = [self methodNameWithMethod:method];
+    NSString *paramString = [NSString stringWithFormat:@"(%@)", [self graphQLStrWithDictionary:params]];
+    NSString *rtn = [NSString stringWithFormat:@"{%@}", [returns componentsJoinedByString:@","]];
+    NSString *result = [NSString stringWithFormat:matrix, methodName, paramString, rtn];
     return result;
+}
+
+- (NSString *)methodNameWithMethod:(NSString *)method{
+    NSRange range = [method rangeOfString:@"("];
+    return [method substringToIndex:range.location];
+}
+
+- (NSString *)graphQLStrWithDictionary:(NSDictionary<NSString *, NSObject *> *)dict {
+    NSMutableArray *parlist = [@[] mutableCopy];
+    for(NSString *key in dict.allKeys) {
+        [parlist addObject:[NSString stringWithFormat:@"'%@':'%@'", key, dict[key]]];
+    }
+    return [parlist componentsJoinedByString:@","];
 }
 
 - (NSString *)gMutationStringWithMethod:(NSString *)method returns:(NSArray<NSString *> *)returns {

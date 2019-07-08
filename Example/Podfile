@@ -4,4 +4,5 @@ target 'GLNetworking_Example' do
   pod 'GLNetworking', :path => '../'
   pod 'WDYExtensions', :path => '../../WDYExtensions'
   pod 'MJRefresh'
+  pod 'YYModel'
 end

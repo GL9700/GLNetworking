@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface GLUser : NSObject
-@property (nonatomic, strong) NSString *id;
+@property (nonatomic, strong) NSString *seminarInfoId;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) NSUInteger age;
 @end
