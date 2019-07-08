@@ -16,3 +16,6 @@
 
 @implementation SeminarInfo
 @end
+
+@implementation MyImages
+@end

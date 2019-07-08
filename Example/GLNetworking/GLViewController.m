@@ -122,12 +122,11 @@
     user.age = 10;
     
     NSString *path = @"tr/v2/graphql";
-    NSDictionary *params = [user gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo"
+    NSDictionary *params = [GLNetworking gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo"
                                               params:@{@"seminarInfoId":user.seminarInfoId}
                                              returns:@[@"seminarId"]];
     [GLNetworking.POST().config([NetGraphQLConfig new]).params(params).path(path) success:^(NSURLResponse *header, id response) {
         NSLog(@"--suc--");
-        NSLog(@"%@", response);
     } failure:^(NSError *error, NSURLResponse *response, id data) {
         NSLog(@"--fad--");
     } complete:^{
@@ -136,7 +135,7 @@
 }
 - (IBAction)onClickGraphQLMutation:(UIButton *)sender {
     SeminarInfo *si = [SeminarInfo new];
-    si.title = @"测试' [:;a/]活动 [:;a/]",
+    si.title = @"测试",
     si.remark=@"活动说明1",
     si.seminarTime=@"2019-06-27 11:39:20",
     si.seminarEndTime=@"2019-06-28 11:39:20",
@@ -147,12 +146,20 @@
     si.tagList=@[@"aaaa",@"bbbb"],
     si.location=@"100000";
     NSString *path = @"tr/v2/graphql";
-    NSDictionary *params = [si gMutationStringWithMethod:@"seminar_save(seminarInfo:SeminarSaveInfo,image:ImageInput,file:[FileInput]):IdInfo"
-                                               variables:@{@"seminarInfo":si}
+    
+    MyImages *img = [MyImages new];
+    img.name = @"i'm image";
+    img.format = @"png";
+    img.size = @"300x300";
+    img.address = @"http://upyun.bejson.com/bj/imgs/upyun_300.png";
+    
+    NSDictionary *params = [GLNetworking gMutationStringWithMethod:@"seminar_save(seminarInfo:SeminarSaveInfo,image:ImageInput,file:[FileInput]):IdInfo"
+                                               variables:@{@"seminarInfo":si, @"image":img}
                                                  returns:@[@"id"]];
+    
+    
     [GLNetworking.POST().config([NetGraphQLConfig new]).params(params).path(path) success:^(NSURLResponse *header, id response) {
         NSLog(@"--suc--");
-        NSLog(@"%@", response);
     } failure:^(NSError *error, NSURLResponse *response, id data) {
         NSLog(@"--fad--");
     } complete:^{

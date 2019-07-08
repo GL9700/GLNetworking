@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.0.0'
+  s.version          = '2.1.0'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -20,6 +20,7 @@ Pod::Spec.new do |s|
   s.description      = 'A simple of Networking.
   History Version:
     > 2.0
+      * 1 add GraphQL support
       * 0 move from Github to Private GitLab Server && pod update, add response header
 
     > 1.1
@@ -52,5 +53,6 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
    s.frameworks = 'SystemConfiguration'
    s.dependency 'AFNetworking', '3.2.0'
+   s.dependency 'YYModel', '1.0.4'
 #   s.dependency 'MMKV', '1.0.17'
 end

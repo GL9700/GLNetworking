@@ -1,25 +1,23 @@
 //
-//  NSObject+GraphQLExt.m
-//  GLNetworking_Example
+//  GLNetworking+GraphQLExt.m
+//  GLNetworking
 //
-//  Created by liguoliang on 2019/7/5.
-//  Copyright © 2019 liandyii@msn.com. All rights reserved.
+//  Created by liguoliang on 2019/7/8.
 //
 
-#import "NSObject+GraphQLExt.h"
-#import <objc/message.h>
-#import <YYModel.h>
+#import "GLNetworking+GraphQLExt.h"
+#import <YYModel/YYModel.h>
 
-@implementation NSObject (GraphQLExt)
+@implementation GLNetworking (GraphQLExt)
 
 /*
  matrix:
-    seminar_view(seminarInfoId:ID!):SeminarInfo ----- {"query":"query {<methodName><(paramString)><{rtn}>}"}
+ seminar_view(seminarInfoId:ID!):SeminarInfo ----- {"query":"query {<methodName><(paramString)><{rtn}>}"}
  */
-- (NSDictionary *)gQueryStringWithMethod:(NSString *)method params:(NSDictionary<NSString *, NSObject *> *)params returns:(NSArray<NSString *> *)returns {
++ (NSDictionary *)gQueryStringWithMethod:(NSString *)method params:(NSDictionary<NSString *, NSObject *> *)params returns:(NSArray<NSString *> *)returns {
     NSString *matrix = @"query {%@%@%@}";
-    NSString *methodName = [self methodNameWithMethod:method];
-    NSString *paramString = [self graphQLStrWithDictionary:params];
+    NSString *methodName = [[GLNetworking managerWithConfig:nil] methodNameWithMethod:method];
+    NSString *paramString = [[GLNetworking managerWithConfig:nil] graphQLStrWithDictionary:params];
     NSString *rtn = [NSString stringWithFormat:@"{%@}", [returns componentsJoinedByString:@","]];
     NSString *result = [NSString stringWithFormat:matrix, methodName, paramString, rtn];
     return @{@"query":result};
@@ -27,15 +25,15 @@
 
 /*
  matrix:
-    seminar_save(seminarInfo:SeminarSaveInfo,image:ImageInput,file:[FileInput]):IdInfo -----
+ seminar_save(seminarInfo:SeminarSaveInfo,image:ImageInput,file:[FileInput]):IdInfo -----
  {"query":"mutation (<paramType>){<methodName><(paramPoint)><{return}>}, variables:"{<Points>}"}
  */
-- (NSDictionary *)gMutationStringWithMethod:(NSString *)method variables:(NSDictionary *)variables returns:(NSArray<NSString *> *)returns {
++ (NSDictionary *)gMutationStringWithMethod:(NSString *)method variables:(NSDictionary *)variables returns:(NSArray<NSString *> *)returns {
     NSString *mtrix = @"mutation %@%@{%@%@%@}";  // methodName point1 methodName point2 <{returns}>
-    NSString *methodName= [self methodNameWithMethod:method];
-    NSDictionary *plist = [self methodParamsListWithMethod:method];
+    NSString *methodName= [[GLNetworking managerWithConfig:nil] methodNameWithMethod:method];
+    NSDictionary *plist = [[GLNetworking managerWithConfig:nil] methodParamsListWithMethod:method];
     
-    NSDictionary *paramsDict = [self paramArgsWithParamDict:plist Variables:variables];
+    NSDictionary *paramsDict = [[GLNetworking managerWithConfig:nil] paramArgsWithParamDict:plist Variables:variables];
     NSString *point1 = [paramsDict[@"point1"] stringByReplacingOccurrencesOfString:@"{" withString:@"("];
     point1 = [point1 stringByReplacingOccurrencesOfString:@"}" withString:@")"];
     NSString *point2 = [paramsDict[@"point2"] stringByReplacingOccurrencesOfString:@"{" withString:@"("];

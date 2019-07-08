@@ -43,3 +43,11 @@
 @property (nonatomic, strong) NSArray<NSString *> *tagList;  //# 标签列表
 @property (nonatomic, strong) NSString *location;   //# 所在区域
 @end
+
+/** http://upyun.bejson.com/bj/imgs/upyun_300.png */
+@interface MyImages:NSObject
+@property (nonatomic, strong) NSString *name;   //# 图片名称
+@property (nonatomic, strong) NSString *format; //# 图片格式
+@property (nonatomic, strong) NSString *size;   //# 图片大小
+@property (nonatomic, strong) NSString *address;    //# 图片地址
+@end
