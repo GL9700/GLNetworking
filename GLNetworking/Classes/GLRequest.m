@@ -48,7 +48,7 @@ static NSMutableSet *kAssociatedList;
 @property (nonatomic, assign) BOOL isCancel;
 @property (nonatomic, assign) float _priority;
 @property (nonatomic, strong) id<GLNetworkPotocol> _config;
-@property (nonatomic, strong) NSDictionary *_params;
+@property (nonatomic, strong) id _params;
 @property (nonatomic, strong) NSString *_wsvsname;
 @property (nonatomic, strong) NSString *_path;
 @property (nonatomic, strong) NSString *url;
@@ -105,9 +105,11 @@ static NSMutableSet *kAssociatedList;
         return self;
     };
 }
-- (GLRequest *(^)(NSDictionary *))params {
-    return ^(NSDictionary *dic) {
-        if (dic != nil) self._params = dic; // 参数
+- (GLRequest *(^)(id))params {
+    return ^(id dic) {
+        if (dic != nil){
+            self._params = dic; // 参数
+        }
         return self;
     };
 }
@@ -315,11 +317,13 @@ static NSMutableSet *kAssociatedList;
 #pragma clang diagnostic ignored "-Wconditional-type-mismatch"
 /** 数据请求 */
 - (GLRequest *)success:(void (^)(NSURLResponse *, id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
-    NSDictionary *encodedParam;
+    id encodedParam = self._params;
     
     /** 编码参数 webService 优先 */
-    if (self._wsvsname != nil) encodedParam = [self encodeParams:self._params ws:self._wsvsname];
-    else if (self._path != nil && self._wsvsname == nil) encodedParam = [self encodeParams:self._params ws:self._path];
+    if([self._params isKindOfClass:[NSDictionary class]]){  // 加密仅支持NSDictonary类型参数
+        if (self._wsvsname != nil) encodedParam = [self encodeParams:(NSDictionary *)self._params ws:self._wsvsname];
+        else if (self._path != nil && self._wsvsname == nil) encodedParam = [self encodeParams:(NSDictionary *)self._params ws:self._path];
+    }
     
     @weak(self)
     self.operation.operationBlock = ^{

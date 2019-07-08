@@ -19,6 +19,7 @@
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		CA1FBA8E22CF1EF80005F01B /* GLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1FBA8D22CF1EF80005F01B /* GLUser.m */; };
 		CA1FBA9122CF484D0005F01B /* NSObject+GraphQLExt.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1FBA9022CF484D0005F01B /* NSObject+GraphQLExt.m */; };
+		CA95DEE922D30A6C001B19C4 /* SeminarInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = CA95DEE822D30A6C001B19C4 /* SeminarInfo.m */; };
 		E8E681C67760F11E6459AE03 /* libPods-GLNetworking_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A3FDE323FB5E07DFB97FF86 /* libPods-GLNetworking_Example.a */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,8 @@
 		CA1FBA8D22CF1EF80005F01B /* GLUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLUser.m; sourceTree = "<group>"; };
 		CA1FBA8F22CF484D0005F01B /* NSObject+GraphQLExt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+GraphQLExt.h"; sourceTree = "<group>"; };
 		CA1FBA9022CF484D0005F01B /* NSObject+GraphQLExt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+GraphQLExt.m"; sourceTree = "<group>"; };
+		CA95DEE722D30A6C001B19C4 /* SeminarInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeminarInfo.h; sourceTree = "<group>"; };
+		CA95DEE822D30A6C001B19C4 /* SeminarInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeminarInfo.m; sourceTree = "<group>"; };
 		D672AB85B94A358A85570AB9 /* Pods_GLNetworking_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GLNetworking_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1FA9DAAE8EE6253CCDD29CC /* GLNetworking.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = GLNetworking.podspec; path = ../GLNetworking.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
@@ -107,6 +110,8 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* GLViewController.h */,
 				6003F5A6195388D20070C39A /* GLViewController.m */,
+				CA95DEE722D30A6C001B19C4 /* SeminarInfo.h */,
+				CA95DEE822D30A6C001B19C4 /* SeminarInfo.m */,
 				CA1FBA8C22CF1EF80005F01B /* GLUser.h */,
 				CA1FBA8D22CF1EF80005F01B /* GLUser.m */,
 				CA1FBA8F22CF484D0005F01B /* NSObject+GraphQLExt.h */,
@@ -269,6 +274,7 @@
 				CA1FBA9122CF484D0005F01B /* NSObject+GraphQLExt.m in Sources */,
 				6003F5A7195388D20070C39A /* GLViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				CA95DEE922D30A6C001B19C4 /* SeminarInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

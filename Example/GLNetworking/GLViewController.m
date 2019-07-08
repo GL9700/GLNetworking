@@ -15,13 +15,15 @@
 #import <GLNetworking.h>
 #import <GLNetworkPotocol.h>
 
+#import "SeminarInfo.h"
 #import "GLUser.h"
 
-@interface NetworkingConfig : NSObject<GLNetworkPotocol>
+/** ========================================= NetNormalConfig =========================================  */
+@interface NetNormalConfig : NSObject<GLNetworkPotocol>
 
 @end
 
-@implementation NetworkingConfig
+@implementation NetNormalConfig
 @synthesize host, header, timeout, isDebug;
 - (instancetype)init {
     if((self = [super init])) {
@@ -35,6 +37,27 @@
 @end
 
 
+/** ========================================= GraphQL config =========================================  */
+@interface NetGraphQLConfig : NSObject<GLNetworkPotocol>
+
+@end
+
+@implementation NetGraphQLConfig
+@synthesize host, header, timeout, isDebug, supJSONReq;
+- (instancetype)init {
+    if((self = [super init])) {
+        host = @"http://jypt-tr.xqngx.net";
+        timeout = 10;
+        header = @{};
+        isDebug = YES;
+        supJSONReq = YES;
+    }
+    return self;
+}
+@end
+
+
+/** ========================================= ViewController =========================================  */
 @interface GLViewController ()
 @property (nonatomic, strong) NSMutableString *output;
 @property (weak, nonatomic) IBOutlet UITextView *outputTextView;
@@ -44,7 +67,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [GLNetworking managerWithConfig:[NetworkingConfig new]];
+    [GLNetworking managerWithConfig:[NetNormalConfig new]];
 }
 
 - (void)oLog:(id)log {
@@ -94,16 +117,17 @@
 }
 - (IBAction)onClickGraphQLQuery:(UIButton *)sender {
     GLUser *user = [GLUser new];
-    user.seminarInfoId = @"200";
+    user.seminarInfoId = @"1847635073457717248";
     user.name = @"abc";
     user.age = 10;
     
-    NSString *path = @"graphql";
-    NSString *pString = [user gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo"
+    NSString *path = @"tr/v2/graphql";
+    NSDictionary *params = [user gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo"
                                               params:@{@"seminarInfoId":user.seminarInfoId}
-                                             returns:@[@"name"]];
-    [GLNetworking.POST().customURL(@"http://192.168.9.140:8080").params(pString).path(path) success:^(NSURLResponse *header, id response) {
+                                             returns:@[@"seminarId"]];
+    [GLNetworking.POST().config([NetGraphQLConfig new]).params(params).path(path) success:^(NSURLResponse *header, id response) {
         NSLog(@"--suc--");
+        NSLog(@"%@", response);
     } failure:^(NSError *error, NSURLResponse *response, id data) {
         NSLog(@"--fad--");
     } complete:^{
@@ -111,7 +135,29 @@
     }];
 }
 - (IBAction)onClickGraphQLMutation:(UIButton *)sender {
-    
+    SeminarInfo *si = [SeminarInfo new];
+    si.title = @"测试' [:;a/]活动 [:;a/]",
+    si.remark=@"活动说明1",
+    si.seminarTime=@"2019-06-27 11:39:20",
+    si.seminarEndTime=@"2019-06-28 11:39:20",
+    si.subject=@[@"01_13",@"01_15"],
+    si.isShare=@"true",
+    si.model=@"01",
+    si.password=@"",
+    si.tagList=@[@"aaaa",@"bbbb"],
+    si.location=@"100000";
+    NSString *path = @"tr/v2/graphql";
+    NSDictionary *params = [si gMutationStringWithMethod:@"seminar_save(seminarInfo:SeminarSaveInfo,image:ImageInput,file:[FileInput]):IdInfo"
+                                               variables:@{@"seminarInfo":si}
+                                                 returns:@[@"id"]];
+    [GLNetworking.POST().config([NetGraphQLConfig new]).params(params).path(path) success:^(NSURLResponse *header, id response) {
+        NSLog(@"--suc--");
+        NSLog(@"%@", response);
+    } failure:^(NSError *error, NSURLResponse *response, id data) {
+        NSLog(@"--fad--");
+    } complete:^{
+        NSLog(@"--cpm--");
+    }];
 }
 
 @end

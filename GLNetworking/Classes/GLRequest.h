@@ -36,8 +36,8 @@ typedef NS_ENUM(uint , GLNetMethod) {
 - (GLRequest *(^)(id<GLNetworkPotocol>))config;
 /** 自定义优先级 */
 - (GLRequest *(^)(GLPriority))priority;
-/** 参数 (NSDictionary:参数) */
-- (GLRequest *(^)(NSDictionary *))params;
+/** 参数 (NSDictionary | NSString(JSON):参数) */
+- (GLRequest *(^)(id))params;
 /** 是否使用编/解码 (默认YES) */
 - (GLRequest *(^)(BOOL))encode;
 - (GLRequest *(^)(BOOL))decode;
