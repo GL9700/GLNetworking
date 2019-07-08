@@ -21,19 +21,45 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RwB-2A-gEM">
-                                <rect key="frame" x="16" y="40" width="161.5" height="30"/>
-                                <color key="backgroundColor" red="0.1843137255" green="0.46666666670000001" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="Ybn-Qe-QyV"/>
-                                </constraints>
-                                <state key="normal" title="GET请求">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="onClickGETRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="Udd-0X-sS5"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="h8l-fR-BPb">
+                                <rect key="frame" x="16" y="40" width="343" height="265"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RwB-2A-gEM">
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="51.5"/>
+                                        <color key="backgroundColor" red="0.1843137255" green="0.46666666670000001" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" title="GET请求">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="onClickGETRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="Udd-0X-sS5"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9tG-91-NpK">
+                                        <rect key="frame" x="0.0" y="71.5" width="343" height="51"/>
+                                        <color key="backgroundColor" red="0.1843137255" green="0.46666666670000001" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" title="POST请求">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="onClickPOSTRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="kP7-fG-rsa"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o02-fi-kFT">
+                                        <rect key="frame" x="0.0" y="142.5" width="343" height="51.5"/>
+                                        <state key="normal" title="GraphQL Query"/>
+                                        <connections>
+                                            <action selector="onClickGraphQLQuery:" destination="whP-gf-Uak" eventType="touchUpInside" id="Kf0-Sc-bl2"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zBq-Ij-8mg">
+                                        <rect key="frame" x="0.0" y="214" width="343" height="51"/>
+                                        <state key="normal" title="GraphQL Mutation"/>
+                                        <connections>
+                                            <action selector="onClickGraphQLMutation:" destination="whP-gf-Uak" eventType="touchUpInside" id="N3s-mf-hxD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DYS-Rm-pjB">
                                 <rect key="frame" x="16" y="352" width="343" height="295"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -46,33 +72,18 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9tG-91-NpK">
-                                <rect key="frame" x="197.5" y="40" width="161.5" height="30"/>
-                                <color key="backgroundColor" red="0.1843137255" green="0.46666666670000001" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="3nf-Yr-m6N"/>
-                                </constraints>
-                                <state key="normal" title="POST请求">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="onClickPOSTRequest:" destination="whP-gf-Uak" eventType="touchUpInside" id="kP7-fG-rsa"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="width" secondItem="9tG-91-NpK" secondAttribute="width" id="EMA-OA-ptS"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="9tG-91-NpK" secondAttribute="trailing" id="NcZ-GC-lzv"/>
                             <constraint firstItem="VOS-6j-rHA" firstAttribute="leading" secondItem="DYS-Rm-pjB" secondAttribute="leading" id="Oov-jQ-0Lh"/>
-                            <constraint firstItem="9tG-91-NpK" firstAttribute="leading" secondItem="RwB-2A-gEM" secondAttribute="trailing" constant="20" id="Tfm-9M-lz9"/>
                             <constraint firstItem="DYS-Rm-pjB" firstAttribute="top" secondItem="VOS-6j-rHA" secondAttribute="bottom" constant="10" id="UfB-2Y-LIr"/>
                             <constraint firstItem="DYS-Rm-pjB" firstAttribute="trailing" secondItem="TpU-gO-2f1" secondAttribute="trailingMargin" id="W8e-Yc-HnQ"/>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="aBR-gy-KCK"/>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" constant="20" id="at9-KN-gQR"/>
+                            <constraint firstItem="h8l-fR-BPb" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" constant="20" id="WFY-V1-yAN"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="h8l-fR-BPb" secondAttribute="trailing" id="Yhg-ch-5Dq"/>
+                            <constraint firstItem="h8l-fR-BPb" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="beR-mX-jVY"/>
+                            <constraint firstItem="VOS-6j-rHA" firstAttribute="top" secondItem="h8l-fR-BPb" secondAttribute="bottom" constant="20" id="hph-Ig-CYj"/>
                             <constraint firstItem="DYS-Rm-pjB" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="ifO-oG-46K"/>
                             <constraint firstItem="Mvr-aV-6Um" firstAttribute="top" secondItem="DYS-Rm-pjB" secondAttribute="bottom" constant="20" id="jz1-T8-Lq4"/>
-                            <constraint firstItem="RwB-2A-gEM" firstAttribute="centerY" secondItem="9tG-91-NpK" secondAttribute="centerY" id="l2r-Z4-Svu"/>
                             <constraint firstItem="VOS-6j-rHA" firstAttribute="centerY" secondItem="TpU-gO-2f1" secondAttribute="centerY" id="lVI-aH-Mjc"/>
                         </constraints>
                     </view>

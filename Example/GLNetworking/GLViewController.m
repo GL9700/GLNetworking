@@ -15,6 +15,7 @@
 #import <GLNetworking.h>
 #import <GLNetworkPotocol.h>
 
+#import "GLUser.h"
 
 @interface NetworkingConfig : NSObject<GLNetworkPotocol>
 
@@ -90,6 +91,20 @@
     } complete:^{
         [self oLog:@"------------End------------\n"];
     }];
+}
+- (IBAction)onClickGraphQLQuery:(UIButton *)sender {
+    NSString *path = @"graphql";
+    NSString *pString = [GLUser gQueryStringWithMethod:@"user(id: Long!): User!" params:nil returns:@[@"name",@"age"]];
+    [GLNetworking.POST().customURL(@"http://192.168.9.140:8080").params(pString).path(path) success:^(NSURLResponse *header, id response) {
+        NSLog(@"--suc--");
+    } failure:^(NSError *error, NSURLResponse *response, id data) {
+        NSLog(@"--fad--");
+    } complete:^{
+        NSLog(@"--cpm--");
+    }];
+}
+- (IBAction)onClickGraphQLMutation:(UIButton *)sender {
+    
 }
 
 @end

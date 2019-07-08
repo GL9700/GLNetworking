@@ -17,6 +17,8 @@
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
+		CA1FBA8E22CF1EF80005F01B /* GLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1FBA8D22CF1EF80005F01B /* GLUser.m */; };
+		CA1FBA9122CF484D0005F01B /* NSObject+GraphQLExt.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1FBA9022CF484D0005F01B /* NSObject+GraphQLExt.m */; };
 		E8E681C67760F11E6459AE03 /* libPods-GLNetworking_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A3FDE323FB5E07DFB97FF86 /* libPods-GLNetworking_Example.a */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,10 @@
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		767E74CF5CCD4B3815151FF7 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CA1FBA8C22CF1EF80005F01B /* GLUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLUser.h; sourceTree = "<group>"; };
+		CA1FBA8D22CF1EF80005F01B /* GLUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLUser.m; sourceTree = "<group>"; };
+		CA1FBA8F22CF484D0005F01B /* NSObject+GraphQLExt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+GraphQLExt.h"; sourceTree = "<group>"; };
+		CA1FBA9022CF484D0005F01B /* NSObject+GraphQLExt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+GraphQLExt.m"; sourceTree = "<group>"; };
 		D672AB85B94A358A85570AB9 /* Pods_GLNetworking_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GLNetworking_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1FA9DAAE8EE6253CCDD29CC /* GLNetworking.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = GLNetworking.podspec; path = ../GLNetworking.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
@@ -101,6 +107,10 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* GLViewController.h */,
 				6003F5A6195388D20070C39A /* GLViewController.m */,
+				CA1FBA8C22CF1EF80005F01B /* GLUser.h */,
+				CA1FBA8D22CF1EF80005F01B /* GLUser.m */,
+				CA1FBA8F22CF484D0005F01B /* NSObject+GraphQLExt.h */,
+				CA1FBA9022CF484D0005F01B /* NSObject+GraphQLExt.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -150,6 +160,7 @@
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
+				9417BEBE2D98AD589EC91958 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -228,6 +239,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		9417BEBE2D98AD589EC91958 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GLNetworking_Example/Pods-GLNetworking_Example-resources.sh",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GLNetworking_Example/Pods-GLNetworking_Example-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -236,6 +265,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* GLAppDelegate.m in Sources */,
+				CA1FBA8E22CF1EF80005F01B /* GLUser.m in Sources */,
+				CA1FBA9122CF484D0005F01B /* NSObject+GraphQLExt.m in Sources */,
 				6003F5A7195388D20070C39A /* GLViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);

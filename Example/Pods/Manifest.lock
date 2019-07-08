@@ -16,22 +16,31 @@ PODS:
     - AFNetworking/NSURLSession
   - GLNetworking (2.0.0):
     - AFNetworking (= 3.2.0)
+  - MJRefresh (3.2.0)
+  - WDYExtensions (1.0.4)
 
 DEPENDENCIES:
   - GLNetworking (from `../`)
+  - MJRefresh
+  - WDYExtensions (from `../../WDYExtensions`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AFNetworking
+    - MJRefresh
 
 EXTERNAL SOURCES:
   GLNetworking:
     :path: "../"
+  WDYExtensions:
+    :path: "../../WDYExtensions"
 
 SPEC CHECKSUMS:
   AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
-  GLNetworking: f607bbacd263d402960c8b7ac1c6536913f348fa
+  GLNetworking: ece7252f1a51be4c3d64e574377d1b8a2467bab4
+  MJRefresh: ed450d6eb9d3346a2cb033ab7eb6de090aeef437
+  WDYExtensions: 0123beac62d5daa6acc8f8fcc4f5c89a1fcf48d3
 
-PODFILE CHECKSUM: 9f630df22f05b8bcfd37a0e15b6a99b2047ac404
+PODFILE CHECKSUM: 4d5a10e22dfdc163f766108856d52f85ee439c12
 
 COCOAPODS: 1.7.0
