@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
       * 0 move from Github to Private GitLab Server && pod update, add response header
       * 1 add GraphQL support
         * 1 fix: methodName for head
-        * 2 opt: rename supJsonReq to isJsonParams;
+        * 2 opt: rename supJsonReq to isJsonParams , wipe warning
 
     > 1.1
       * 4 fix online status only invoke once, fix to invoke at check NetStatus time

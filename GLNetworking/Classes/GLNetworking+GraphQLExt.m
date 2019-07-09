@@ -101,25 +101,22 @@
 #pragma mark- Mutation 系列
 /** -mutation params Point1 point variables 三个位置 */
 - (NSDictionary *)paramArgsWithParamDict:(NSDictionary *)pdict Variables:(NSDictionary<NSString *, id> *)vars {
-    __block NSUInteger index = 0;
+    int index = 0;
     NSMutableDictionary *point1 = [NSMutableDictionary dictionary];
     NSMutableDictionary *point2 = [NSMutableDictionary dictionary];
     NSMutableDictionary *point3 = [NSMutableDictionary dictionary];
     NSArray *pdictKeys = pdict.allKeys;
-    [vars enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if([pdictKeys containsObject:key]){
+    NSArray *varKeys = vars.allKeys;
+    for(NSString *key in varKeys) {
+        if([pdictKeys containsObject:key]) {
             index++;
-            NSString *tempIndex = [NSString stringWithFormat:@"T%lu", index];
+            NSString *tempIndex = [NSString stringWithFormat:@"T%d", index];
             point1[[NSString stringWithFormat:@"$%@", tempIndex]] = [pdict objectForKey:key];
             point2[key] = [NSString stringWithFormat:@"$%@", tempIndex];
-            point3[tempIndex] = [obj yy_modelToJSONObject];
+            point3[tempIndex] = [vars[key] yy_modelToJSONObject];
         }
-    }];
-    NSDictionary *retDict = @{
-                              @"point1":[point1 graphQLString],
-                              @"point2":[point2 graphQLString],
-                              @"variables":point3
-                              };
+    }
+    NSDictionary *retDict = @{@"point1":[point1 graphQLString], @"point2":[point2 graphQLString], @"variables":point3};
     return retDict;
 }
 @end
