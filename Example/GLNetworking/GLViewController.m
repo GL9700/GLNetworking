@@ -43,14 +43,14 @@
 @end
 
 @implementation NetGraphQLConfig
-@synthesize host, header, timeout, isDebug, supJSONReq;
+@synthesize host, header, timeout, isDebug, isJsonParams;
 - (instancetype)init {
     if((self = [super init])) {
         host = @"http://jypt-tr.xqngx.net";
         timeout = 10;
         header = @{};
         isDebug = YES;
-        supJSONReq = YES;
+        isJsonParams = YES;
     }
     return self;
 }

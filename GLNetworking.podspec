@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.1.1'
+  s.version          = '2.1.2'
   s.summary          = 'Just Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
       * 0 move from Github to Private GitLab Server && pod update, add response header
       * 1 add GraphQL support
         * 1 fix: methodName for head
+        * 2 opt: rename supJsonReq to isJsonParams;
 
     > 1.1
       * 4 fix online status only invoke once, fix to invoke at check NetStatus time

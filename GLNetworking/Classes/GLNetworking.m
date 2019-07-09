@@ -23,8 +23,8 @@ static NSOperationQueue *requestQueue;
         instance = [[GLNetworking alloc]init];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
-        if([config respondsToSelector:@selector(supJSONReq)]){
-            if(config.supJSONReq){
+        if([config respondsToSelector:@selector(isJsonParams)]){
+            if(config.isJsonParams){
                 manager.requestSerializer = [AFJSONRequestSerializer serializer];
             }
         }

@@ -94,8 +94,8 @@ static NSMutableSet *kAssociatedList;
         if (conf != nil) {
             self._config = conf;
             self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-            if([conf respondsToSelector:@selector(supJSONReq)]){
-                conf.supJSONReq ? self.manager.requestSerializer = [AFJSONRequestSerializer serializer]:nil;
+            if([conf respondsToSelector:@selector(isJsonParams)]){
+                conf.isJsonParams ? self.manager.requestSerializer = [AFJSONRequestSerializer serializer]:nil;
             }
             self.manager.requestSerializer.timeoutInterval = conf.timeout;
             for (NSString *key in [conf.header allKeys]) {
