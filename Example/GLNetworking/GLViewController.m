@@ -81,6 +81,7 @@
     self.output = nil;
 }
 
+#pragma mark-  Request With HTTP/s GET
 - (IBAction)onClickGETRequest:(UIButton *)sender {
     [self clearLog];
     NSString *path = @"weatherApi";
@@ -99,6 +100,7 @@
     }];
 }
 
+#pragma mark-  Request With HTTP/s Post
 - (IBAction)onClickPOSTRequest:(UIButton *)sender {
     [self clearLog];
     NSString *path = @"weatherApi";
@@ -115,16 +117,25 @@
         [self oLog:@"------------End------------\n"];
     }];
 }
+
+#pragma mark- Request With GraphQL Query
 - (IBAction)onClickGraphQLQuery:(UIButton *)sender {
+    /* Model 正常实例化 */
     GLUser *user = [GLUser new];
     user.seminarInfoId = @"1847635073457717248";
     user.name = @"abc";
     user.age = 10;
     
+    /* -------------请求代码--------------- */
+    /* 设置Path */
     NSString *path = @"tr/v2/graphql";
-    NSDictionary *params = [GLNetworking gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo"
-                                              params:@{@"seminarInfoId":user.seminarInfoId}
-                                             returns:@[@"seminarId"]];
+    
+    /* 构建参数 */
+    NSDictionary *params = [GLNetworking gQueryStringWithMethod:@"seminar_view(seminarInfoId:ID!):SeminarInfo" // 服务器给出的方法名称
+                                              params:@{@"seminarInfoId":user.seminarInfoId} // 传给服务器的内容（Key与方法中参数一致）
+                                             returns:@[@"seminarId"]];  // 返回值（方法返回值中的属性名称）
+    
+    /* 请求开始 */
     [GLNetworking.POST().config([NetGraphQLConfig new]).params(params).path(path) success:^(NSURLResponse *header, id response) {
         NSLog(@"--suc--");
     } failure:^(NSError *error, NSURLResponse *response, id data) {
@@ -133,7 +144,10 @@
         NSLog(@"--cpm--");
     }];
 }
+
+#pragma mark- Request With GraphQL Mutation
 - (IBAction)onClickGraphQLMutation:(UIButton *)sender {
+    /* Model 正常实例化 */
     SeminarInfo *si = [SeminarInfo new];
     si.title = @"测试",
     si.remark=@"活动说明1",
@@ -145,7 +159,6 @@
     si.password=@"",
     si.tagList=@[@"aaaa",@"bbbb"],
     si.location=@"100000";
-    NSString *path = @"tr/v2/graphql";
     
     MyImages *img = [MyImages new];
     img.name = @"i'm image";
@@ -153,11 +166,16 @@
     img.size = @"300x300";
     img.address = @"http://upyun.bejson.com/bj/imgs/upyun_300.png";
     
+    /* -------------请求代码--------------- */
+    /* 设置 Path */
+    NSString *path = @"tr/v2/graphql";
+    
+    /* 配置参数 */
     NSDictionary *params = [GLNetworking gMutationStringWithMethod:@"seminar_save(seminarInfo:SeminarSaveInfo,image:ImageInput,file:[FileInput]):IdInfo"
                                                variables:@{@"seminarInfo":si, @"image":img}
                                                  returns:@[@"id"]];
     
-    
+    /* 请求开始 */
     [GLNetworking.POST().config([NetGraphQLConfig new]).params(params).path(path) success:^(NSURLResponse *header, id response) {
         NSLog(@"--suc--");
     } failure:^(NSError *error, NSURLResponse *response, id data) {
