@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
   s.version          = '2.1.2'
-  s.summary          = 'Just Networking.'
+  s.summary          = 'Just Simple Networking.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -37,24 +37,26 @@ Pod::Spec.new do |s|
         * 4 add PUT DELETE request Method;
         * 2 add function : download allow resume use [.supportResume(YES)] , default is NO;
     '
-  s.homepage         = 'http://gitlab.wdcloud.cc:10080/iosbase/GLNetworking'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.com/GL9700/GLNetworking'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'liguoliang' => 'guoliang@51jianjiao.com' }
-  s.source           = { :git => 'http://gitlab.wdcloud.cc:10080/iosbase/GLNetworking.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.author           = { 'GL9700' => '36617161@qq.com' }
+  s.source           = { :git => 'https://github.com/GL9700/GLNetworking.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '8.0'
 
-  s.source_files = 'GLNetworking/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'GLNetworking' => ['GLNetworking/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-   s.frameworks = 'SystemConfiguration'
-   s.dependency 'AFNetworking', '3.2.0'
-   s.dependency 'YYModel', '1.0.4'
-#   s.dependency 'MMKV', '1.0.17'
+  s.subspec 'Core' do |ext|
+    ext.source_files = 'GLNetworking/Classes/**/*.{h, m}'
+    ext.frameworks = 'SystemConfiguration'
+    ext.dependency 'AFNetworking', '3.2.0'
+  end
+  s.subspec 'Cache' do |ext|
+    ext.source_files = 'GLNetworking/Cache/**/*.{h, m}'
+    ext.dependency 'GLNetworking/Core'
+    
+  end
+  s.subspec 'GraphQL' do |ext|
+    ext.source_files = 'GLNetworking/Classes/**/*.{h, m}'
+    ext.dependency 'GLNetworking/Core'
+    ext.dependency 'YYModel', '1.0.4'
+  end
 end

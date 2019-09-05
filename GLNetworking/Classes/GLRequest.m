@@ -6,7 +6,9 @@
 //
 
 #import "GLRequest.h"
-#import "GLCacheData.h"
+#if __has_include(<GLCacheData.h>)
+    #import <GLCacheData.h>
+#endif
 #import <CommonCrypto/CommonDigest.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
@@ -232,6 +234,7 @@ static NSMutableSet *kAssociatedList;
     }
     return _URLhash;
 }
+#if __has_include(<GLCacheData.h>)
 - (NSString *)cacheFolder {
     if(!_cacheFolder){
         _cacheFolder = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:@"GLCache"];
@@ -272,6 +275,7 @@ static NSMutableSet *kAssociatedList;
     }
     NSString *path = [self.cacheFolder stringByAppendingPathComponent:self.URLhash];
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+#if __has_include(<GLCacheData.h>)
     if([self cacheContainInCacheList]){
         klogInDEBUG(@"在缓存名单中");
         GLCacheData *cachedata = [GLCacheData new];
@@ -286,6 +290,7 @@ static NSMutableSet *kAssociatedList;
     }else{
         klogInDEBUG(@"不在缓存名单中，放弃操作");
     }
+#endif
 }
 - (GLCacheData *)cacheLoadData {
     GLCacheData *cdata = nil;
@@ -310,6 +315,7 @@ static NSMutableSet *kAssociatedList;
         }
     }
 }
+#endif
 @end
 
 @implementation GLRequest(RequestExt)
@@ -331,7 +337,7 @@ static NSMutableSet *kAssociatedList;
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000) + arc4random() % 10;
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-        
+#if __has_include(<GLCacheData.h>)
         BOOL containerSelf = [self cacheContainInAccociatedList];
         if(containerSelf && self->ignoreCache==NO)   // 找到关联关系 并且不忽略缓存
         {
@@ -347,6 +353,7 @@ static NSMutableSet *kAssociatedList;
             dispatch_semaphore_signal(sem);
         }
         else    // 不存在关联关系
+#endif
         {
             if([self netStatus])
             {
@@ -359,7 +366,9 @@ static NSMutableSet *kAssociatedList;
                             if (responseObject == nil) {
                                 kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
+                                #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject resp:task.response];
+#endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
                                 klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
@@ -383,7 +392,9 @@ static NSMutableSet *kAssociatedList;
                             if (responseObject == nil) {
                                 kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
+                                #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject resp:task.response];
+#endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
                                 klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
@@ -407,7 +418,9 @@ static NSMutableSet *kAssociatedList;
                             if (responseObject == nil) {
                                 kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
+                                #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject  resp:task.response];
+#endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
                                 klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
@@ -431,7 +444,9 @@ static NSMutableSet *kAssociatedList;
                             if (responseObject == nil) {
                                 kBLK3(fadBLK, kErrorResponseNULL, task.response, nil);
                             } else {
+#if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject  resp:task.response];
+#endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
                                 klogInDEBUG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
                                 BOOL userFailure = NO;
@@ -451,6 +466,7 @@ static NSMutableSet *kAssociatedList;
                     }
                 }
             }else{
+#if __has_include(<GLCacheData.h>)
                 // 强制查找缓存
                 GLCacheData *cdata = [self cacheLoadData];
                 if(cdata!=nil){
@@ -464,7 +480,9 @@ static NSMutableSet *kAssociatedList;
                     }
                     userFailure ? kBLK3(fadBLK, kErrorCustomUserInfo(userInfo,cdata.data), cdata.response, resp) : kBLK2(sucBLK, cdata.response, resp);
                     dispatch_semaphore_signal(sem);
-                }else{
+                }else
+#endif
+                {
                     klogInDEBUG(@"网络请求状态:%d | Online:No | hasCache:No | -- no Data", uniq);
                     NSURLResponse *eresp = [[NSHTTPURLResponse alloc]initWithURL:[NSURL URLWithString:self.url] statusCode:1001 HTTPVersion:nil headerFields:nil];
                     kBLK3(fadBLK, [NSError errorWithDomain:@"无网-无Cache数据" code:30010 userInfo:nil], eresp, nil);

@@ -18,7 +18,9 @@ typedef BOOL(^BLKIsOnline)(void);
 @optional
 @property (nonatomic, assign) BOOL isDebug;         // YES 输出debug信息
 @property (nonatomic, assign) BOOL isJsonParams;    // 使用JSON格式进行body传递（默认NO），且自动设定Content-Type为Application/Json
+#if __has_include(<GLCacheData.h>)
 @property (nonatomic, strong) NSSet *cacheList;     // 缓存名单
+#endif
 
 /** 编码方案 | params:原始参数 | encodeKey:编码key(优先使用WebServiceName,WS为空后使用path)| */
 - (NSDictionary *)paramsProcessedWithOriginParams:(NSDictionary *)params WebServiceName:(NSString *)wsn;
