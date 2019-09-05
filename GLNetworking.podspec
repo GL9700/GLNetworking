@@ -45,17 +45,17 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
 
   s.subspec 'Core' do |ext|
-    ext.source_files = 'GLNetworking/Classes/**/*.{h, m}'
+    ext.source_files = 'GLNetworking/Classes/**/*.{h,m}'
     ext.frameworks = 'SystemConfiguration'
     ext.dependency 'AFNetworking', '3.2.0'
   end
   s.subspec 'Cache' do |ext|
-    ext.source_files = 'GLNetworking/Cache/**/*.{h, m}'
+    ext.source_files = 'GLNetworking/Cache/**/*.{h,m}'
     ext.dependency 'GLNetworking/Core'
     
   end
   s.subspec 'GraphQL' do |ext|
-    ext.source_files = 'GLNetworking/Classes/**/*.{h, m}'
+    ext.source_files = 'GLNetworking/Classes/**/*.{h,m}'
     ext.dependency 'GLNetworking/Core'
     ext.dependency 'YYModel', '1.0.4'
   end

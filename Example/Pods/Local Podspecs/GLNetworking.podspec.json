@@ -21,7 +21,7 @@
   "subspecs": [
     {
       "name": "Core",
-      "source_files": "GLNetworking/Classes/**/*.{h, m}",
+      "source_files": "GLNetworking/Classes/**/*.{h,m}",
       "frameworks": "SystemConfiguration",
       "dependencies": {
         "AFNetworking": [
@@ -31,7 +31,7 @@
     },
     {
       "name": "Cache",
-      "source_files": "GLNetworking/Cache/**/*.{h, m}",
+      "source_files": "GLNetworking/Cache/**/*.{h,m}",
       "dependencies": {
         "GLNetworking/Core": [
 
@@ -40,7 +40,7 @@
     },
     {
       "name": "GraphQL",
-      "source_files": "GLNetworking/Classes/**/*.{h, m}",
+      "source_files": "GLNetworking/Classes/**/*.{h,m}",
       "dependencies": {
         "GLNetworking/Core": [
 

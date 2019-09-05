@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "21F6FE735640F54F0F40BF2C3AF2210B"
-               BuildableName = "GLNetworking"
+               BlueprintIdentifier = "CF0556E5D6492DF7DCFA3254C9EC600D"
+               BuildableName = "libGLNetworking.a"
                BlueprintName = "GLNetworking"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
@@ -45,8 +45,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "21F6FE735640F54F0F40BF2C3AF2210B"
-            BuildableName = "GLNetworking"
+            BlueprintIdentifier = "CF0556E5D6492DF7DCFA3254C9EC600D"
+            BuildableName = "libGLNetworking.a"
             BlueprintName = "GLNetworking"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
@@ -63,8 +63,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "21F6FE735640F54F0F40BF2C3AF2210B"
-            BuildableName = "GLNetworking"
+            BlueprintIdentifier = "CF0556E5D6492DF7DCFA3254C9EC600D"
+            BuildableName = "libGLNetworking.a"
             BlueprintName = "GLNetworking"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
