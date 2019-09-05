@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.1.2'
+  s.version          = '2.2.0'
   s.summary          = 'Just Simple Networking.'
 
 # This description is used to generate tags and improve search results.
@@ -24,6 +24,7 @@ Pod::Spec.new do |s|
       * 1 add GraphQL support
         * 1 fix: methodName for head
         * 2 opt: rename supJsonReq to isJsonParams , wipe warning
+      * 2 Refactoring Structure use subspecs
 
     > 1.1
       * 4 fix online status only invoke once, fix to invoke at check NetStatus time
