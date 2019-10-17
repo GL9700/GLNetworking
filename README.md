@@ -9,6 +9,15 @@
 而且在请求的时候，我们希望使用者不再着重关注网络请求代码内容，而是把更多的精力放到业务逻辑上。
 所以GLNetworking的目标是：`更轻量`，`更简洁`，`更灵活`。基于此我们有了GLNetworking网络请求库。
 
+## Installation
+
+GLNetworking is available through [CocoaPods](https://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+
+```ruby
+pod 'GLNetworking'
+```
+
 ## Simple Use
 
 #### 首先, 我们需要对网络请求进行初始化的少量配置。
@@ -96,15 +105,6 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 ## Requirements
 
 GLNetworking only User on the Objective-C platform.
-
-## Installation
-
-GLNetworking is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
-
-```ruby
-pod 'GLNetworking'
-```
 
 ## Author
 
