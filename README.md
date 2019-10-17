@@ -108,7 +108,7 @@ pod 'GLNetworking'
 
 ## Author
 
-liandyii@msn.com, 36617161@qq.com
+liguoliang, 36617161@qq.com
 
 ## License
 
