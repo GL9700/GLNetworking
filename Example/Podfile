@@ -1,5 +1,5 @@
 #use_frameworks!
 
 target 'GLNetworking_Example' do
-  pod 'GLNetworking/Core', :path => '../'
+  pod 'GLNetworking', :path => '../'
 end

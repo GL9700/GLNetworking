@@ -8,6 +8,7 @@
 #import "GLCacheData.h"
 
 @implementation GLCacheData
+
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.data forKey:NSStringFromSelector(@selector(data))];
     [aCoder encodeObject:self.response forKey:NSStringFromSelector(@selector(response))];
