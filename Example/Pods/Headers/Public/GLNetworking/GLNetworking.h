@@ -1,1 +1,1 @@
-../../../../../GLNetworking/Classes/GLNetworking.h
+../../../../../GLNetworking/Classes/Core/GLNetworking.h

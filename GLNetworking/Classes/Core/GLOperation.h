@@ -10,5 +10,5 @@
 typedef void (^GLNetworkOperationBlock)(void);
 
 @interface GLOperation : NSOperation
-@property (nonatomic , copy) GLNetworkOperationBlock operationBlock;
+@property (nonatomic, copy) GLNetworkOperationBlock operationBlock;
 @end

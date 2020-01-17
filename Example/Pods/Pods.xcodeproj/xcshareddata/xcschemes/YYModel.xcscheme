@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1020"
+   LastUpgradeVersion = "1130"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "40871CE01D90746F7E516667D2BBA6FC"
-               BuildableName = "libPods-GLNetworking_Example.a"
-               BlueprintName = "Pods-GLNetworking_Example"
+               BlueprintIdentifier = "71E5671B4B9CD92BD8093E7CB8AFFAC1"
+               BuildableName = "libYYModel.a"
+               BlueprintName = "YYModel"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "40871CE01D90746F7E516667D2BBA6FC"
-            BuildableName = "libPods-GLNetworking_Example.a"
-            BlueprintName = "Pods-GLNetworking_Example"
-            ReferencedContainer = "container:Pods.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -59,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "40871CE01D90746F7E516667D2BBA6FC"
-            BuildableName = "libPods-GLNetworking_Example.a"
-            BlueprintName = "Pods-GLNetworking_Example"
+            BlueprintIdentifier = "71E5671B4B9CD92BD8093E7CB8AFFAC1"
+            BuildableName = "libYYModel.a"
+            BlueprintName = "YYModel"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

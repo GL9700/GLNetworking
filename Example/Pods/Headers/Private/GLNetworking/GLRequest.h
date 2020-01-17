@@ -1,1 +1,1 @@
-../../../../../GLNetworking/Classes/GLRequest.h
+../../../../../GLNetworking/Classes/Core/GLRequest.h

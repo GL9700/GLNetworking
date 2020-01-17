@@ -1,1 +1,1 @@
-../../../../../GLNetworking/Classes/GLNetworkPotocol.h
+../../../../../GLNetworking/Classes/Core/GLNetworkPotocol.h

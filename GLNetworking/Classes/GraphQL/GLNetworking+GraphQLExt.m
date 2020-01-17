@@ -20,7 +20,7 @@
     NSString *paramString = [[GLNetworking managerWithConfig:nil] graphQLStrWithDictionary:params];
     NSString *rtn = [NSString stringWithFormat:@"{%@}", [returns componentsJoinedByString:@","]];
     NSString *result = [NSString stringWithFormat:matrix, methodName, paramString, rtn];
-    return @{@"query":result};
+    return @{ @"query": result };
 }
 
 /*
@@ -30,21 +30,21 @@
  */
 + (NSDictionary *)gMutationStringWithMethod:(NSString *)method variables:(NSDictionary *)variables returns:(NSArray<NSString *> *)returns {
     NSString *mtrix = @"mutation %@%@{%@%@%@}";  // methodName point1 methodName point2 <{returns}>
-    NSString *methodName= [[GLNetworking managerWithConfig:nil] methodNameWithMethod:method];
+    NSString *methodName = [[GLNetworking managerWithConfig:nil] methodNameWithMethod:method];
     NSDictionary *plist = [[GLNetworking managerWithConfig:nil] methodParamsListWithMethod:method];
-    
+
     NSDictionary *paramsDict = [[GLNetworking managerWithConfig:nil] paramArgsWithParamDict:plist Variables:variables];
     NSString *point1 = [paramsDict[@"point1"] stringByReplacingOccurrencesOfString:@"{" withString:@"("];
     point1 = [point1 stringByReplacingOccurrencesOfString:@"}" withString:@")"];
     NSString *point2 = [paramsDict[@"point2"] stringByReplacingOccurrencesOfString:@"{" withString:@"("];
     point2 = [point2 stringByReplacingOccurrencesOfString:@"}" withString:@")"];
-    
+
     NSString *item1 = [NSString stringWithFormat:mtrix, methodName, point1, methodName, point2, [NSString stringWithFormat:@"{%@}", [returns componentsJoinedByString:@","]]];
-    
+
     return @{
-             @"query":item1,
-             @"variables":paramsDict[@"variables"]
-             };
+        @"query": item1,
+        @"variables": paramsDict[@"variables"]
+    };
 }
 
 #pragma mark- GraphQL
@@ -53,42 +53,44 @@
     NSRange range = [method rangeOfString:@"("];
     return [method substringToIndex:range.location];
 }
+
 /** -graphql- method params List */
 - (NSDictionary *)methodParamsListWithMethod:(NSString *)method {
     NSRange range = [method rangeOfString:@"("];
-    NSString *content = [method substringFromIndex:range.location+1];
+    NSString *content = [method substringFromIndex:range.location + 1];
     range = [content rangeOfString:@")"];
     content = [content substringToIndex:range.location];
     content = [content stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     for (NSString *itemStr in [content componentsSeparatedByString:@","]) {
         NSRange r = [itemStr rangeOfString:@":"];
-        dict[[itemStr substringToIndex:r.location]] = [itemStr substringFromIndex:r.location+1];
+        dict[[itemStr substringToIndex:r.location]] = [itemStr substringFromIndex:r.location + 1];
     }
     return [dict copy];
 }
+
 /** -graphql- method return Type */
 - (NSString *)methodReturnTypeWithMethod:(NSString *)method {
     NSString *content = [method stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSRange r = [content rangeOfString:@"):"];
-    NSString *ret = [content substringFromIndex:r.location+2];
+    NSString *ret = [content substringFromIndex:r.location + 2];
     return ret;
 }
 
 #pragma mark- Query 系列
 /** -query- params to string */
 - (NSString *)graphQLStrWithDictionary:(NSDictionary<NSString *, NSObject *> *)dict {
-    if(dict==nil || dict.allKeys.count==0){
+    if (dict == nil || dict.allKeys.count == 0) {
         return @"";
     }
     NSMutableArray *parlist = [@[] mutableCopy];
-    for(NSString *key in dict.allKeys) {
+    for (NSString *key in dict.allKeys) {
         /* 调整Key, 删除掉"[" 和 "]" */
         NSString *nk = key;
-        if([nk hasPrefix:@"["]){
+        if ([nk hasPrefix:@"["]) {
             nk = [nk substringFromIndex:1];
         }
-        if([nk hasSuffix:@"]"]){
+        if ([nk hasSuffix:@"]"]) {
             nk = [nk substringToIndex:1];
         }
         /* 配置 value */
@@ -107,8 +109,8 @@
     NSMutableDictionary *point3 = [NSMutableDictionary dictionary];
     NSArray *pdictKeys = pdict.allKeys;
     NSArray *varKeys = vars.allKeys;
-    for(NSString *key in varKeys) {
-        if([pdictKeys containsObject:key]) {
+    for (NSString *key in varKeys) {
+        if ([pdictKeys containsObject:key]) {
             index++;
             NSString *tempIndex = [NSString stringWithFormat:@"T%d", index];
             point1[[NSString stringWithFormat:@"$%@", tempIndex]] = [pdict objectForKey:key];
@@ -116,7 +118,8 @@
             point3[tempIndex] = [vars[key] yy_modelToJSONObject];
         }
     }
-    NSDictionary *retDict = @{@"point1":[point1 graphQLString], @"point2":[point2 graphQLString], @"variables":point3};
+    NSDictionary *retDict = @{ @"point1": [point1 graphQLString], @"point2": [point2 graphQLString], @"variables": point3 };
     return retDict;
 }
+
 @end

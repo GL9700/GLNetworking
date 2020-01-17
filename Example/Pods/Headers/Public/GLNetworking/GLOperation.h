@@ -1,1 +1,1 @@
-../../../../../GLNetworking/Classes/GLOperation.h
+../../../../../GLNetworking/Classes/Core/GLOperation.h

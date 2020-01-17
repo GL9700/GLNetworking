@@ -8,14 +8,12 @@
 #import "GLNetworking.h"
 #define kMaxConcurrentCount 10
 
-
 static NSMutableSet *list;
 static id<GLNetworkPotocol> globalConfig;
 static AFHTTPSessionManager *manager;
 static NSOperationQueue *requestQueue;
 
 @implementation GLNetworking
-
 + (instancetype)managerWithConfig:(id<GLNetworkPotocol>)config {
     static dispatch_once_t onceToken;
     static GLNetworking *instance;
@@ -23,12 +21,12 @@ static NSOperationQueue *requestQueue;
         instance = [[GLNetworking alloc]init];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
-        if([config respondsToSelector:@selector(isJsonParams)]){
-            if(config.isJsonParams){
+        if ([config respondsToSelector:@selector(isJsonParams)]) {
+            if (config.isJsonParams) {
                 manager.requestSerializer = [AFJSONRequestSerializer serializer];
             }
         }
-        manager.requestSerializer.timeoutInterval = (NSTimeInterval)config.timeout;
+        manager.requestSerializer.timeoutInterval = [config respondsToSelector:@selector(requestTimeout)] ? [config requestTimeout] : 10;
         requestQueue = [[NSOperationQueue alloc]init];
         requestQueue.maxConcurrentOperationCount = 4;
     });
@@ -39,11 +37,11 @@ static NSOperationQueue *requestQueue;
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "www.baidu.com");
     SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
-    return (flags!=0);
+    return (flags != 0);
 }
 
 + (NSMutableSet *)list {
-    if(list==nil) {
+    if (list == nil) {
         list = [[NSMutableSet alloc]init];
     }
     return list;
@@ -63,60 +61,60 @@ static NSOperationQueue *requestQueue;
 
 + (GLRequest *(^)(void))DELETE {
     return ^() {
-        GLRequest *req = [GLNetworking createRequest];
-        req.method = GLMethodDELETE;
-        return req;
+               GLRequest *req = [GLNetworking createRequest];
+               req.method = GLMethodDELETE;
+               return req;
     };
 }
 
 + (GLRequest *(^)(void))PUT {
     return ^() {
-        GLRequest *req = [GLNetworking createRequest];
-        req.method = GLMethodPUT;
-        return req;
+               GLRequest *req = [GLNetworking createRequest];
+               req.method = GLMethodPUT;
+               return req;
     };
 }
 
 + (GLRequest *(^)(void))POST {
     return ^() {
-        GLRequest *req = [GLNetworking createRequest];
-        req.method = GLMethodPOST;
-        return req;
+               GLRequest *req = [GLNetworking createRequest];
+               req.method = GLMethodPOST;
+               return req;
     };
 }
 
 + (GLRequest *(^)(void))GET {
-    return ^(){
-        GLRequest *req = [GLNetworking createRequest];
-        req.method = GLMethodGET;
-        return req;
+    return ^() {
+               GLRequest *req = [GLNetworking createRequest];
+               req.method = GLMethodGET;
+               return req;
     };
 }
 
 + (GLRequest *(^)(void))UPLOAD {
-    return ^(){
-        GLRequest *req = [GLNetworking createRequest];
-        return req;
+    return ^() {
+               GLRequest *req = [GLNetworking createRequest];
+               return req;
     };
 }
 
 + (GLRequest *(^)(void))DOWNLOAD {
-    return ^(){
-        GLRequest *req = [GLNetworking createRequest];
-        return req;
+    return ^() {
+               GLRequest *req = [GLNetworking createRequest];
+               return req;
     };
 }
 
 + (void)cancelRequests:(NSArray *)requests {
-    @synchronized(requests){
-        if(requests!=nil) {
-            for(GLRequest *req in requests) {
+    @synchronized(requests) {
+        if (requests != nil) {
+            for (GLRequest *req in requests) {
                 [req cancelTaskWhenDownloadUseBLK:nil];
-                if(req!=nil)
-                    [list removeObject:req];
+                if (req != nil) [list removeObject:req];
             }
-        } else {
-            for(GLRequest *req in list) {
+        }
+        else {
+            for (GLRequest *req in list) {
                 [req cancelTaskWhenDownloadUseBLK:nil];
             }
             [list removeAllObjects];
