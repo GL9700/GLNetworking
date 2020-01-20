@@ -72,7 +72,7 @@ typedef BOOL (^BLKIsOnline)(void);
  *      2. 如果没有产生网络错误，但是返回的数据内有需要进行判断的内容，则需要实现此方法，并依据数据(data参数)，进行判断，是否需要返回Error信息。
  * @warning 定义ErrorCode时尽量避免如下区间：-1，-999，-1000～-1120，-1200～-1206，-2000，-3000～-3007 (详见:NSURLError.h)
  */
-- (NSError *)interceptWithURLResponse:(NSHTTPURLResponse *)response success:(id)data;
+- (NSError *)interceptWithURL:(NSString *)url Header:(NSHTTPURLResponse *)header Success:(id)data Failed:(NSError *)error;
 //- (BOOL)invocationAfterRequestWS:(NSString *)webserviceORpath success:(id)response toUserFailedInfo:(NSDictionary *__autoreleasing *)userInfo;
 /** HTTPS local server */
 - (AFSecurityPolicy *)developmentServerSecurity;

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.4.0'
+  s.version          = '2.5.0'
   s.summary          = 'Just Simple Networking .by liguoliang.'
 
 # This description is used to generate tags and improve search results.
@@ -19,6 +19,8 @@ Pod::Spec.new do |s|
 
   s.description      = 'A simple of Networking.
   History Version:
+    * 2.5.0
+        feat: 增加拦截的功能。现在可以拦截失败的请求，进行统一处理
     * 2.4.0
         move to github and public
     * 2.2.0
