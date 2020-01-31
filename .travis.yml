@@ -6,9 +6,11 @@ osx_image: xcode10.3
 language: objective-c
 # cache: cocoapods
 # podfile: Example/Podfile
-# before_install:
-# - gem install cocoapods # Since Travis is not always on latest version
-# - pod install --project-directory=Example
+
+before_install:
+- gem install cocoapods # Since Travis is not always on latest version
+- pod install --project-directory=Example
+
 script:
 - xcodebuild -workspace Example/GLNetworking.xcworkspace -scheme GLNetworking-Example -sdk iphonesimulator
 - pod lib lint --allow-warnings
