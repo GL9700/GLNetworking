@@ -53,7 +53,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ext|
     ext.source_files = 'GLNetworking/Classes/Core/**/*.{h,m}'
     ext.frameworks = 'SystemConfiguration'
-    ext.dependency 'AFNetworking', '~>3.2.0'
+    ext.dependency 'AFNetworking'
   end
   
   s.subspec 'Cache' do |ext|
