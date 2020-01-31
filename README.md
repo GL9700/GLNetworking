@@ -1,6 +1,6 @@
 # GLNetworking
 
-[![CI Status](https://img.shields.io/travis/liandyii@msn.com/GLNetworking.svg?style=flat)](https://travis-ci.org/liandyii@msn.com/GLNetworking)
+[![CI Status](https://img.shields.io/travis/liandyii@msn.com/GLNetworking.svg?style=flat)](https://travis-ci.org/GL9700/GLNetworking)
 [![Version](https://img.shields.io/cocoapods/v/GLNetworking.svg?style=flat)](https://cocoapods.org/pods/GLNetworking)
 [![License](https://img.shields.io/cocoapods/l/GLNetworking.svg?style=flat)](https://cocoapods.org/pods/GLNetworking)
 [![Platform](https://img.shields.io/cocoapods/p/GLNetworking.svg?style=flat)](https://cocoapods.org/pods/GLNetworking)
