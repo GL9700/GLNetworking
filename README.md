@@ -16,6 +16,8 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'GLNetworking'
+#pod 'GLNetworking/Cache'
+#pod 'GLNetworking/GraphQL'
 ```
 
 ## Simple Use
