@@ -158,39 +158,41 @@ static NSMutableSet *kAssociatedList;
 - (NSString *)url {
     NSURLComponents *url = [NSURLComponents componentsWithString:self.currentURL];
     if (url) {
+        // scheme
         if ([url.scheme isEqual:nil]) {
             url.scheme = @"http";
         }
-        if (url.host == nil && ![url.path isEqualToString:@""]) {
-            if ([url.path containsString:@"/"]) {
-                url.host = [url.path substringToIndex:[url.path rangeOfString:@"/"].location];
+        if ([url.scheme isEqualToString:@"https"]) {
+            [self securityPolicy];
+        }
+        // host
+        // <NSURLComponents 0x28153cfa0>
+        // {scheme = (null), user = (null), password = (null), host = (null), port = (null), path = baidu.com, query = (null), fragment = (null)}
+        // {scheme = (null), user = (null), password = (null), host = (null), port = (null), path = baidu.com/aa/bb, query = (null), fragment = (null)}
+        if (![url.path hasPrefix:@"/"] && url.host == nil) {
+            NSInteger location = [url.path rangeOfString:@"/"].location;
+            if (location < url.path.length) {
+                url.host = [url.path substringToIndex:location];
+                url.path = [url.path substringFromIndex:location];
             }
             else {
                 url.host = url.path;
                 url.path = @"";
             }
         }
-        if ([url.path isEqualToString:@""] || url.path == nil) {
-            url.path = self._path;
+        // path
+        if ([url.path isEqualToString:@""]) {
+            url.path = @"/";
         }
-        else if ([url.path containsString:@"/"]) {
-            NSMutableString *path = [[url.path substringFromIndex:[url.path rangeOfString:@"/"].location] mutableCopy];
-            [path stringByAppendingPathComponent:self._path];
-            url.path = path;
-        }
-        if ([url.scheme isEqualToString:@"https"]) {
-            [self securityPolicy];
-        }
+        [url.path stringByAppendingPathComponent:self._path];
         _url = url.URL.absoluteString;
     }
     else {
-        if (_url == nil) {
-            _url = [self.currentURL stringByAppendingPathComponent:self._path];
-        }
+        _url = [self.currentURL stringByAppendingPathComponent:self._path];
         if (![_url hasPrefix:@"http"]) {
             _url = [@"http://" stringByAppendingString:_url];
         }
-        if ([_url hasPrefix:@"https"]) {
+        else if ([_url hasPrefix:@"https://"]) {
             [self securityPolicy];
         }
     }
@@ -242,20 +244,25 @@ static NSMutableSet *kAssociatedList;
 }
 
 /** 解析并转换数据 */
-- (id)analyResponse:(id)response withResponse:(NSURLResponse *)taskResponse {
+- (id)analyResponse:(id)data withResponse:(NSURLResponse *)respheader {
     id resp;
     NSError *err = nil;
-    /* 解码 */
-    if (self.obstructDecode == NO &&
-        [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
-        response = [self._config responseObjectForResponse:(NSHTTPURLResponse *)taskResponse data:response];
+    
+    // 解密
+    if (self.obstructDecode == NO && [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
+        data = [self._config responseObjectForResponse:(NSHTTPURLResponse *)respheader data:data];
     }
-    /* 尝试 data -> id */
-    if ([response isKindOfClass:[NSData class]])                                                    // 非明文
-        resp = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableLeaves error:&err];
-    else resp = response;
-    if (resp == nil) resp = [[NSString alloc]initWithData:response encoding:NSUTF8StringEncoding];  /* 尝试 data -> String */
-    if (resp == nil) resp = response;                                                               /* 转换失败 返回 原值 */
+    
+    // 转换
+    if ([data isKindOfClass:[NSData class]]) {
+        resp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&err];
+    }
+    if (resp == nil) {
+        resp = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    }
+    if (resp == nil) {
+        resp = data;
+    }
     return resp;
 }
 
@@ -385,14 +392,20 @@ static NSMutableSet *kAssociatedList;
 @end
 
 @implementation GLRequest (RequestExt)
-/** 如果请求成功，则判断是否主动改为失败，来统一处理啊其他信息 */
+
+/**
+ * 判断是否主动改为失败，来统一处理啊其他信息
+ *  如果请求成功，可以--请求成功 或 请求失败
+ *  如果请求失败，必须--请求失败
+ */
+
 - (void)switchSucOrFadWithURL:(NSString *)urlString
               HTTPURLResponse:(NSHTTPURLResponse *)httpURLResponse
                      respData:(id)data
                     respError:(NSError *)error
                     handleSuc:(void (^)(NSURLResponse *, id))sucBLK
                     handleFad:(void (^)(NSError *, NSURLResponse *, id))fadBLK {
-    NSError *userError = nil;
+    NSError *userError = error;
     if ([self._config respondsToSelector:@selector(interceptWithURL:Header:Success:Failed:)]) {
         userError = [self._config interceptWithURL:urlString Header:httpURLResponse Success:data Failed:error];
     }
@@ -441,7 +454,10 @@ static NSMutableSet *kAssociatedList;
         else    // 不存在关联关系
 #endif
         {
-            if ([self netStatus]) {
+            if (!self.url) {
+                kBLK3(fadBLK, [NSError errorWithDomain:@"请求地址不正确" code:-9000 userInfo:nil], nil, nil);
+            }
+            else if ([self netStatus]) {
                 klogInDEBUG(@"网络请求状态:%d | Online:Yes | hasCache:~ | -- ignore Cache", uniq);
                 klogInDEBUG(@"网络请求开始(%d):%d | URL:%@ | path:%@ | params:%@", self.method, uniq, self.url, self._path, self._params);
                 switch (self.method) {

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.5.0'
+  s.version          = '2.5.1'
   s.summary          = 'Just Simple Networking .by liguoliang.'
 
 # This description is used to generate tags and improve search results.
@@ -17,32 +17,7 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = 'A simple of Networking.
-  History Version:
-    * 2.5.0
-        feat: 增加拦截的功能。现在可以拦截失败的请求，进行统一处理
-    * 2.4.0
-        move to github and public
-    * 2.2.0
-        Refactoring Structure use subspecs
-    * 2.1.1
-        fix: methodName for head
-        opt: rename supJsonReq to isJsonParams , wipe warning
-    * 2.1.0
-        add GraphQL support
-    * 2.0.0
-        move from Github to Private GitLab Server && pod update, add response header
-    * 1.1.4
-        fix online status only invoke once, fix to invoke at check NetStatus time
-    * 1.1.3
-        fix Logic in No Net & No CacheData --> return NetFailed
-    * 1.1.2
-        remove JSONString(config.head) from  MD5 rule
-    * 1.1.1
-        detail with upload Request
-    * 1.1.0
-        add customList for cache
-    '
+  s.description      = 'A simple of Networking. by liguoliang 36617161@qq.com'
   s.homepage         = 'https://github.com/GL9700/GLNetworking'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'liguoliang' => '36617161@qq.com' }

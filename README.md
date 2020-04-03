@@ -141,6 +141,18 @@ complete:^{
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+##   History
+* 2.5.1 - 2020-04-03
+    优化关于地址拼接部分逻辑
+    修复数据接收到后的控制逻辑
+* 2.5.0
+    增加拦截的功能。现在可以拦截失败的请求，进行统一处理
+* 2.1.1
+    支持Json方式参数传递
+* 2.1.0
+    add GraphQL support
+
+
 ## Requirements
 
 GLNetworking only User on the Objective-C platform.

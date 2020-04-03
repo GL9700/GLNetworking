@@ -64,7 +64,7 @@ typedef BOOL (^BLKIsOnline)(void);
  *      为空   : 直接回到成功;
  * @return
  *      不为空 : 说明进行了处理，返回用户定义的Error或请求的系统的Error;
- * @param response 服务器返回头信息
+ * @param header 服务器返回头信息
  * @param data 服务器返回数据
  * @discussion
  *      1. 如果请求发送出去，中间产生网络错误，则不会进入此方法，直接返回Failed。
