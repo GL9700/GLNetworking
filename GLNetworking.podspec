@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.5.2'
+  s.version          = '2.6.0'
   s.summary          = '基于AFN3封装，采用链式方式，极大的增强了易用性和便捷性；并引入了请求优先级策略，优化输出'
 
   s.description      = '基于AFN3封装，采用链式方式，极大的增强了易用性和便捷性；并引入了请求优先级策略，优化输出'
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ext|
     ext.source_files = 'GLNetworking/Classes/Core/**/*.{h,m}'
     ext.frameworks = 'SystemConfiguration'
-    ext.dependency 'AFNetworking'
+    ext.dependency 'AFNetworking', '<4.0.0'
   end
   
   s.subspec 'Cache' do |ext|
