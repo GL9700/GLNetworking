@@ -8,16 +8,10 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.5.1'
-  s.summary          = 'Just Simple Networking .by liguoliang.'
+  s.version          = '2.5.2'
+  s.summary          = '基于AFN3封装，采用链式方式，极大的增强了易用性和便捷性；并引入了请求优先级策略，优化输出'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
-  s.description      = 'A simple of Networking. by liguoliang 36617161@qq.com'
+  s.description      = '基于AFN3封装，采用链式方式，极大的增强了易用性和便捷性；并引入了请求优先级策略，优化输出'
   s.homepage         = 'https://github.com/GL9700/GLNetworking'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'liguoliang' => '36617161@qq.com' }
