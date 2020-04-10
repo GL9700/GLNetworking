@@ -1,5 +1,4 @@
 #use_frameworks!
-source "https://github.com/CocoaPods/Specs"
 
 target 'GLNetworking_Example' do
   pod 'GLNetworking', :path => '../'
