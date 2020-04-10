@@ -7,7 +7,7 @@
 
 在一般的项目中，我们都需要进行网络请求，无论是为了发送数据给服务器还是接收最新的数据。
 而且在请求的时候，我们希望使用者不再着重关注网络请求代码内容，而是把更多的精力放到业务逻辑上。
-所以GLNetworking的目标是：`更轻量`，`更简洁`，`更灵活`。基于此我们有了GLNetworking网络请求库。
+所以GLNetworking的目标是：`更轻量`，`更简洁`，`更灵活`。基于此实现了GLNetworking网络请求库，目前暂时基于AFN。
 
 ## Installation
 
@@ -142,6 +142,8 @@ complete:^{
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ##   History
+* 2.6.0 - 2020-04-10
+    暂时修复已知问题：由于此项目暂时依赖AFN3.x，但目前最新版本为4.x不兼容3.x的内容，所以暂时锁定依赖版本为“低于4.0”
 * 2.5.1 - 2020-04-03
     优化关于地址拼接部分逻辑
     修复数据接收到后的控制逻辑
