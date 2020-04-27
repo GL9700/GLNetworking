@@ -14,6 +14,7 @@ typedef NS_ENUM (uint, GLPriority) {
     GLPriorityLow     = 1, //低于默认
     GLPriorityHigh    = 2 //高于默认
 };
+
 typedef NS_ENUM (uint, GLNetMethod) {
     GLMethodPOST,
     GLMethodGET,

@@ -23,18 +23,25 @@ typedef BOOL (^BLKIsOnline)(void);
 @required
 /** host地址 */
 - (NSString *)requestHost;
+
 /** 设置请求头, 可根据 请求path 来更改 */
 - (NSDictionary *)requestHeaderWithPath:(NSString *)path;
 
 @optional
 /** 使用JSON格式进行body传递, 默认NO, 且自动在请求头中追加"Content-Type":"Application/Json" */
 - (BOOL)isJsonParams;
-/** 超时时长(秒), 默认:10*/
+
+/** 超时时长(秒), 默认:10 */
 - (NSTimeInterval)requestTimeout;
-/** 是否输出Debug信息, 默认:NO*/
-- (BOOL)isDebugMode;
+
 /** 缓存名单 */
 - (NSSet *)cacheList;
+
+/** 是否输出Debug信息, 默认:NO */
+- (BOOL)isDebugMode;
+
+/** Log信息 */
+- (void)logMessage:(NSString *)msg;
 
 @optional
 
