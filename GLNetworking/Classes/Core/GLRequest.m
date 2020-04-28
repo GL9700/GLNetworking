@@ -185,7 +185,7 @@ static NSMutableSet *kAssociatedList;
         if ([url.path isEqualToString:@""]) {
             url.path = @"/";
         }
-        [url.path stringByAppendingPathComponent:self._path];
+        url.path = [url.path stringByAppendingPathComponent:self._path];
         _url = url.URL.absoluteString;
     }
     else {

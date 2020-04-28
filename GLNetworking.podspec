@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.6.1'
+  s.version          = '2.6.2'
   s.summary          = '基于AFN3封装，采用链式方式，极大的增强了易用性和便捷性；并引入了请求优先级策略，优化输出'
 
   s.description      = '基于AFN3封装，采用链式方式，极大的增强了易用性和便捷性；并引入了请求优先级策略，优化输出'
