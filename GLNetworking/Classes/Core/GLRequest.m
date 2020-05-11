@@ -246,23 +246,23 @@ static NSMutableSet *kAssociatedList;
 
 /** 解析并转换数据 */
 - (id)analyResponse:(id)data withResponse:(NSURLResponse *)respheader {
-    id resp;
-    NSError *err = nil;
-    
-    // 解密
-    if (self.obstructDecode == NO && [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
-        data = [self._config responseObjectForResponse:(NSHTTPURLResponse *)respheader data:data];
-    }
-    
-    // 转换
-    if ([data isKindOfClass:[NSData class]]) {
-        resp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&err];
-    }
-    if (resp == nil) {
-        resp = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    }
-    if (resp == nil) {
-        resp = data;
+    id resp = nil;
+    if (data != nil){
+        // 解密
+        if (self.obstructDecode == NO && [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
+            data = [self._config responseObjectForResponse:(NSHTTPURLResponse *)respheader data:data];
+        }
+        if ([data isKindOfClass:[NSData class]]) {
+            // 尝试使用json解析Data
+            resp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+            // json失败，尝试转换为字符串
+            if(resp == nil){
+                resp = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+            }
+        }
+        if(resp == nil){
+            resp = data;
+        }
     }
     return resp;
 }
