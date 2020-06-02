@@ -462,7 +462,7 @@ static NSMutableSet *kAssociatedList;
                 LOG(@"网络请求开始:%d | Method:%s | URL:%@ | path:%@ | params:%@", uniq, methodList[self.method], self.url, self._path, self._params);
                 switch (self.method) {
                     case GLMethodGET: {
-                        self.task = [self.manager GET:self.url parameters:encodedParam progress: ^(NSProgress *_Nonnull downloadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [self.manager GET:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull downloadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -481,7 +481,7 @@ static NSMutableSet *kAssociatedList;
                         break;
                     }
                     case GLMethodPOST: {
-                        self.task = [self.manager POST:self.url parameters:encodedParam progress: ^(NSProgress *_Nonnull uploadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [self.manager POST:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull uploadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -500,7 +500,7 @@ static NSMutableSet *kAssociatedList;
                         break;
                     }
                     case GLMethodPUT: {
-                        self.task = [self.manager PUT:self.url parameters:encodedParam success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [self.manager PUT:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -519,7 +519,7 @@ static NSMutableSet *kAssociatedList;
                         break;
                     }
                     case GLMethodDELETE: {
-                        self.task = [self.manager DELETE:self.url parameters:encodedParam success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [self.manager DELETE:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -629,7 +629,8 @@ static NSMutableSet *kAssociatedList;
         int uniq = (int)((stTime - (int)stTime) * 1000);
         LOG(@"网络请求(上传):%d | 开始 | URL:%@", uniq, self.url);
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-        self.task = [self.manager POST:self.url parameters:nil constructingBodyWithBlock: ^(id<AFMultipartFormData>  _Nonnull formData) {
+                
+        self.task = [self.manager POST:self.url parameters:nil headers:[self._config requestHeaderWithPath:self._path] constructingBodyWithBlock: ^(id<AFMultipartFormData>  _Nonnull formData) {
             for (NSString *key in [fileDatas allKeys]) {
                 if ([fileDatas[key] isKindOfClass:[NSDictionary class]]) {
                     // 带名字类型

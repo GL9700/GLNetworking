@@ -1,28 +1,28 @@
 PODS:
-  - AFNetworking (3.2.1):
-    - AFNetworking/NSURLSession (= 3.2.1)
-    - AFNetworking/Reachability (= 3.2.1)
-    - AFNetworking/Security (= 3.2.1)
-    - AFNetworking/Serialization (= 3.2.1)
-    - AFNetworking/UIKit (= 3.2.1)
-  - AFNetworking/NSURLSession (3.2.1):
+  - AFNetworking (4.0.1):
+    - AFNetworking/NSURLSession (= 4.0.1)
+    - AFNetworking/Reachability (= 4.0.1)
+    - AFNetworking/Security (= 4.0.1)
+    - AFNetworking/Serialization (= 4.0.1)
+    - AFNetworking/UIKit (= 4.0.1)
+  - AFNetworking/NSURLSession (4.0.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.2.1)
-  - AFNetworking/Security (3.2.1)
-  - AFNetworking/Serialization (3.2.1)
-  - AFNetworking/UIKit (3.2.1):
+  - AFNetworking/Reachability (4.0.1)
+  - AFNetworking/Security (4.0.1)
+  - AFNetworking/Serialization (4.0.1)
+  - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
-  - GLNetworking (2.6.0):
-    - GLNetworking/Cache (= 2.6.0)
-    - GLNetworking/Core (= 2.6.0)
-    - GLNetworking/GraphQL (= 2.6.0)
-  - GLNetworking/Cache (2.6.0):
+  - GLNetworking (2.6.4):
+    - GLNetworking/Cache (= 2.6.4)
+    - GLNetworking/Core (= 2.6.4)
+    - GLNetworking/GraphQL (= 2.6.4)
+  - GLNetworking/Cache (2.6.4):
     - GLNetworking/Core
-  - GLNetworking/Core (2.6.0):
-    - AFNetworking
-  - GLNetworking/GraphQL (2.6.0):
+  - GLNetworking/Core (2.6.4):
+    - AFNetworking (> 4.0.0)
+  - GLNetworking/GraphQL (2.6.4):
     - GLNetworking/Core
     - YYModel
   - YYModel (1.0.4)
@@ -40,10 +40,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  GLNetworking: aff64053f0eb09b85e781d346999bb410be3e56b
+  AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
+  GLNetworking: 27b9174a4e616166d8517631ab4eb22a40198d4c
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 9f630df22f05b8bcfd37a0e15b6a99b2047ac404
+PODFILE CHECKSUM: 190c1a83ed9b000a27a3b91b9c110fa47e10c70a
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.3

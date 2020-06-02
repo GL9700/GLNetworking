@@ -142,6 +142,8 @@ complete:^{
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ##   History
+* 2.7.0 - 2020-06-02
+    使用了AFN4+的版本，由于AFN3里么使用了UIWebView，无法进行提交
 * 2.6.0 - 2020-04-10
     暂时修复已知问题：由于此项目暂时依赖AFN3.x，但目前最新版本为4.x不兼容3.x的内容，所以暂时锁定依赖版本为“低于4.0”
 * 2.5.1 - 2020-04-03
