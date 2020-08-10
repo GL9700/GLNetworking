@@ -14,15 +14,15 @@ PODS:
   - AFNetworking/Serialization (4.0.1)
   - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
-  - GLNetworking (2.6.4):
-    - GLNetworking/Cache (= 2.6.4)
-    - GLNetworking/Core (= 2.6.4)
-    - GLNetworking/GraphQL (= 2.6.4)
-  - GLNetworking/Cache (2.6.4):
+  - GLNetworking (2.7.0):
+    - GLNetworking/Cache (= 2.7.0)
+    - GLNetworking/Core (= 2.7.0)
+    - GLNetworking/GraphQL (= 2.7.0)
+  - GLNetworking/Cache (2.7.0):
     - GLNetworking/Core
-  - GLNetworking/Core (2.6.4):
+  - GLNetworking/Core (2.7.0):
     - AFNetworking (> 4.0.0)
-  - GLNetworking/GraphQL (2.6.4):
+  - GLNetworking/GraphQL (2.7.0):
     - GLNetworking/Core
     - YYModel
   - YYModel (1.0.4)
@@ -41,9 +41,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
-  GLNetworking: 27b9174a4e616166d8517631ab4eb22a40198d4c
+  GLNetworking: 99db2e038555d80dd9af7906dc63f72233eeda2b
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
 PODFILE CHECKSUM: 190c1a83ed9b000a27a3b91b9c110fa47e10c70a
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.9.2

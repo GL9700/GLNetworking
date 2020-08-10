@@ -13,15 +13,15 @@
 #import <GLCacheData.h>
 #endif
 
-#define weak(o)                autoreleasepool {} __weak typeof(o) o ## Weak = o;
-#define strong(o)              autoreleasepool {} __strong typeof(o) o = o ## Weak;
-#define LOG(str, ...)  [self._config respondsToSelector:@selector(logMessage:)] ? [self._config logMessage:[NSString stringWithFormat:str, ## __VA_ARGS__]] : nil
-#define kBLK0(blk)             self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(); }) : nil
-#define kBLK1(blk, p1)         self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1); }) : nil
-#define kBLK2(blk, p1, p2)     self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2); }) : nil
-#define kBLK3(blk, p1, p2, p3) self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2, p3); }) : nil
+//#define weak(o)                autoreleasepool {} __weak typeof(o) o ## Weak = o;
+//#define strong(o)              autoreleasepool {} __strong typeof(o) o = o ## Weak;
+//#define [self Log:[NSString stringWithFormat:str, ...)  [self._config respondsToSelector:@selector(logMessage:)] ? [self._config logMessage:[NSString stringWithFormat:str, ## __VA_ARGS__]] : nil
+//#define kBLK0(blk)             self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(); }) : nil
+//#define kBLK1(blk, p1)         self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1); }) : nil
+//#define kBLK2(blk, p1, p2)     self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2); }) : nil
+//#define kBLK3(blk, p1, p2, p3) self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2, p3); }) : nil
 
-const char* methodList[] = {"POST", "GET", "DELETE", "PUT"};
+const char *methodList[] = { "POST", "GET", "DELETE", "PUT" };
 
 static NSMutableSet *kAssociatedList;
 
@@ -66,6 +66,53 @@ static NSMutableSet *kAssociatedList;
 @end
 
 @implementation GLRequest
+
+- (void)doit:(void (^)(void))handle {
+    if (self.isCancel == NO) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (handle) {
+                handle();
+            }
+        });
+    }
+}
+
+- (void)doit:(void (^)(id))handle p1:(id)p1 {
+    if (self.isCancel == NO) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (handle) {
+                handle(p1);
+            }
+        });
+    }
+}
+
+- (void)doit:(void (^)(id, id))handle p1:(id)p1 p2:(id)p2 {
+    if (self.isCancel == NO) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (handle) {
+                handle(p1, p2);
+            }
+        });
+    }
+}
+
+- (void)doit:(void (^)(id, id, id))handle p1:(id)p1 p2:(id)p2 p3:(id)p3 {
+    if (self.isCancel == NO) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (handle) {
+                handle(p1, p2, p3);
+            }
+        });
+    }
+}
+
+- (void)Log:(NSString *)msg {
+    if (self._config && [self._config respondsToSelector:@selector(logMessage:)]) {
+        [self._config logMessage:msg];
+    }
+}
+
 #pragma mark- Initialization
 - (instancetype)initWithQueue:(NSOperationQueue *)queue {
     if ((self = [super init])) {
@@ -247,7 +294,7 @@ static NSMutableSet *kAssociatedList;
 /** 解析并转换数据 */
 - (id)analyResponse:(id)data withResponse:(NSURLResponse *)respheader {
     id resp = nil;
-    if (data != nil){
+    if (data != nil) {
         // 解密
         if (self.obstructDecode == NO && [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
             data = [self._config responseObjectForResponse:(NSHTTPURLResponse *)respheader data:data];
@@ -256,11 +303,11 @@ static NSMutableSet *kAssociatedList;
             // 尝试使用json解析Data
             resp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
             // json失败，尝试转换为字符串
-            if(resp == nil){
+            if (resp == nil) {
                 resp = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
             }
         }
-        if(resp == nil){
+        if (resp == nil) {
             resp = data;
         }
     }
@@ -347,20 +394,20 @@ static NSMutableSet *kAssociatedList;
     NSString *path = [self.cacheFolder stringByAppendingPathComponent:self.URLhash];
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
     if ([self cacheContainInCacheList]) {
-        LOG(@"在缓存名单中");
+        [self Log:@"在缓存名单中"];
         GLCacheData *cachedata = [GLCacheData new];
         cachedata.data = data;
         cachedata.response = urlresponse;
         if ([NSKeyedArchiver archiveRootObject:cachedata toFile:path]) {
             [self cacheAddToAccociatedList];
-            LOG(@"写入成功:%@", path);
+            [self Log:[NSString stringWithFormat:@"写入成功:%@", path]];
         }
         else {
-            LOG(@"写入失败:%@", path);
+            [self Log:[NSString stringWithFormat:@"写入失败:%@", path]];
         }
     }
     else {
-        LOG(@"不在缓存名单中，放弃操作");
+        [self Log:@"不在缓存名单中，放弃操作"];
     }
 }
 
@@ -369,13 +416,13 @@ static NSMutableSet *kAssociatedList;
     if ([self._config respondsToSelector:@selector(cacheList)] == NO) return cdata;
     NSString *path = [self.cacheFolder stringByAppendingPathComponent:self.URLhash];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        LOG(@"找到缓存的文件");
+        [self Log:@"找到缓存的文件"];
         cdata = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
     }
     else {
-        LOG(@"没找到缓存的文件");
+        [self Log:@"没找到缓存的文件"];
     }
-    LOG(@"从缓存中读取:URL:%@|LocalPath:%@|REL:%@", self.url, path, cdata != nil ? @"SUC" : @"FAD");
+    [self Log:[NSString stringWithFormat:@"从缓存中读取:URL:%@|LocalPath:%@|REL:%@", self.url, path, cdata != nil ? @"SUC" : @"FAD"]];
     return cdata;
 }
 
@@ -410,10 +457,12 @@ static NSMutableSet *kAssociatedList;
         userError = [self._config interceptWithURL:urlString Header:httpURLResponse Success:data Failed:error];
     }
     if (userError) {
-        kBLK3(fadBLK, userError, httpURLResponse, data);
+//        kBLK3(fadBLK, userError, httpURLResponse, data);
+        [self doit:fadBLK p1:userError p2:httpURLResponse p3:data];
     }
     else {
-        kBLK2(sucBLK, httpURLResponse, data);
+//        kBLK2(sucBLK, httpURLResponse, data);
+        [self doit:sucBLK p1:httpURLResponse p2:data];
     }
 }
 
@@ -433,9 +482,9 @@ static NSMutableSet *kAssociatedList;
             }
         }
     }
-    @weak(self)
+    __weak typeof(self) wself = self;
     self.operation.operationBlock = ^{
-        @strong(self)
+        __strong typeof(wself) self = wself;
         [self resetHeader];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000) + arc4random() % 10;
@@ -445,7 +494,7 @@ static NSMutableSet *kAssociatedList;
         BOOL containerSelf = [self cacheContainInAccociatedList];
         if (containerSelf && self->ignoreCache == NO) {
             // 找到关联关系 并且不忽略缓存
-            LOG(@"网络请求状态:%d | Online:Yes | hasCache:Yes | -- use Cache", uniq);
+            [self Log:[NSString stringWithFormat:@"网络请求状态:%d | Online:Yes | hasCache:Yes | -- use Cache", uniq]];
             GLCacheData *cdata = [self cacheLoadData];
             id resp = [self analyResponse:cdata.data withResponse:cdata.response];
             [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)cdata.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
@@ -455,26 +504,30 @@ static NSMutableSet *kAssociatedList;
 #endif
         {
             if (!self.url) {
-                kBLK3(fadBLK, [NSError errorWithDomain:@"请求地址不正确" code:-9000 userInfo:nil], nil, nil);
+                [self doit:fadBLK
+                        p1:[NSError errorWithDomain:@"请求地址不正确" code:-9000 userInfo:nil]
+                        p2:nil
+                        p3:nil];
+//                kBLK3(fadBLK, [NSError errorWithDomain:@"请求地址不正确" code:-9000 userInfo:nil], nil, nil);
             }
             else if ([self netStatus]) {
-                LOG(@"网络状态检查:%d | Online:Yes | hasCache:~ | -- ignore Cache", uniq);
-                LOG(@"网络请求开始:%d | Method:%s | URL:%@ | path:%@ | params:%@", uniq, methodList[self.method], self.url, self._path, self._params);
+                [self Log:[NSString stringWithFormat:@"网络状态检查:%d | Online:Yes | hasCache:~ | -- ignore Cache", uniq]];
+                [self Log:[NSString stringWithFormat:@"网络请求开始:%d | Method:%s | URL:%@ | path:%@ | params:%@", uniq, methodList[self.method], self.url, self._path, self._params]];
                 switch (self.method) {
                     case GLMethodGET: {
                         self.task = [self.manager GET:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull downloadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            [self Log:[NSString stringWithFormat:@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime]];
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject resp:task.response];
                                 #endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                LOG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                [self Log:[NSString stringWithFormat:@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp]];
                                 [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
                             }
                             dispatch_semaphore_signal(sem);
                         } failure: ^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            LOG(@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method], CACurrentMediaTime() - stTime, error);
+                            [self Log:[NSString stringWithFormat:@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method], CACurrentMediaTime() - stTime, error]];
                             [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
                             dispatch_semaphore_signal(sem);
                         }];
@@ -482,18 +535,18 @@ static NSMutableSet *kAssociatedList;
                     }
                     case GLMethodPOST: {
                         self.task = [self.manager POST:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull uploadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            [self Log:[NSString stringWithFormat:@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime]];
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject resp:task.response];
                                 #endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                LOG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                [self Log:[NSString stringWithFormat:@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp]];
                                 [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
                             }
                             dispatch_semaphore_signal(sem);
                         } failure: ^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            LOG(@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method], CACurrentMediaTime() - stTime, error);
+                            [self Log:[NSString stringWithFormat:@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method], CACurrentMediaTime() - stTime, error]];
                             [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
                             dispatch_semaphore_signal(sem);
                         }];
@@ -501,18 +554,18 @@ static NSMutableSet *kAssociatedList;
                     }
                     case GLMethodPUT: {
                         self.task = [self.manager PUT:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            [self Log:[NSString stringWithFormat:@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime]];
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject resp:task.response];
                                 #endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                LOG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                [self Log:[NSString stringWithFormat:@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp]];
                                 [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
                             }
                             dispatch_semaphore_signal(sem);
                         } failure: ^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            LOG(@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method],  CACurrentMediaTime() - stTime, error);
+                            [self Log:[NSString stringWithFormat:@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method],  CACurrentMediaTime() - stTime, error]];
                             [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
                             dispatch_semaphore_signal(sem);
                         }];
@@ -520,18 +573,18 @@ static NSMutableSet *kAssociatedList;
                     }
                     case GLMethodDELETE: {
                         self.task = [self.manager DELETE:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-                            LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            [self Log:[NSString stringWithFormat:@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime]];
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
                                 [self cacheSaveData:responseObject resp:task.response];
                                 #endif
                                 id resp = [self analyResponse:responseObject withResponse:task.response];
-                                LOG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                [self Log:[NSString stringWithFormat:@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp]];
                                 [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
                             }
                             dispatch_semaphore_signal(sem);
                         } failure: ^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-                            LOG(@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@",  uniq, methodList[self.method], CACurrentMediaTime() - stTime, error);
+                            [self Log:[NSString stringWithFormat:@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@",  uniq, methodList[self.method], CACurrentMediaTime() - stTime, error]];
                             [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
                             dispatch_semaphore_signal(sem);
                         }];
@@ -544,7 +597,7 @@ static NSMutableSet *kAssociatedList;
                 // 强制查找缓存
                 GLCacheData *cdata = [self cacheLoadData];
                 if (cdata != nil) {
-                    LOG(@"网络请求状态:%d | Online:No | hasCache:Yes | -- use Cache", uniq);
+                    [self Log:[NSString stringWithFormat:@"网络请求状态:%d | Online:No | hasCache:Yes | -- use Cache", uniq]];
                     [self cacheAddToAccociatedList];
                     id resp = [self analyResponse:cdata.data withResponse:cdata.response];
                     [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)cdata.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
@@ -553,7 +606,7 @@ static NSMutableSet *kAssociatedList;
                 else
                 #endif
                 {
-                    LOG(@"网络请求状态:%d | Online:No | hasCache:No | -- no Data", uniq);
+                    [self Log:[NSString stringWithFormat:@"网络请求状态:%d | Online:No | hasCache:No | -- no Data", uniq]];
                     NSURLResponse *eresp = [[NSHTTPURLResponse alloc]initWithURL:[NSURL URLWithString:self.url] statusCode:1001 HTTPVersion:nil headerFields:nil];
                     NSError *noCacheError = [NSError errorWithDomain:@"Offline And notFound cache data" code:-1301 userInfo:nil];
                     [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)eresp respData:nil respError:noCacheError handleSuc:sucBLK handleFad:fadBLK];
@@ -563,8 +616,9 @@ static NSMutableSet *kAssociatedList;
             }
         }
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-        LOG(@"网络请求完成:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
-        kBLK0(complete);
+        [self Log:[NSString stringWithFormat:@"网络请求完成:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime]];
+//        kBLK0(complete);
+        [self doit:complete];
     };
     [self.queue addOperation:self.operation];
     return self;
@@ -572,64 +626,70 @@ static NSMutableSet *kAssociatedList;
 
 /** 下载请求 */
 /** 注意，下载不能被拦截 */
-- (GLRequest *)writeToLocalPath:(NSString *)path resumeInfo:(NSData *)resumeData progress:(void (^)(uint64_t, uint64_t))progBLK success:(void (^)(NSURLResponse *, id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
+- (GLRequest *)writeToLocalPath:(NSString *)path resumeInfo:(NSData *)resumeData
+                       progress:(void (^)(NSNumber *totalByte, NSNumber *loadedByte))progBLK
+                        success:(void (^)(NSURLResponse *header, id response))sucBLK
+                        failure:(void (^)(NSError *error, NSURLResponse *response, id data))fadBLK
+                       complete:(void (^)(void))complete {
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.url]];
     NSTimeInterval time = [self._config respondsToSelector:@selector(requestTimeout)] ? [self._config requestTimeout] : 10;
     NSDictionary *header = [self._config requestHeaderWithPath:self._path];
     [req setTimeoutInterval:time];
     [req setAllHTTPHeaderFields:header];
-    @weak(self)
+    __weak typeof(self) wself = self;
     self.operation.operationBlock = ^{
-        @strong(self)
+        __strong typeof(wself) self = wself;
         [self resetHeader];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000);
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
         if (resumeData != nil) {
-            LOG(@"网络请求(下载):%d | 恢复 | URL:%@", uniq, self.url);
+            [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 恢复 | URL:%@", uniq, self.url]];
             self.task = [self.manager downloadTaskWithResumeData:resumeData progress: ^(NSProgress *_Nonnull downloadProgress) {
-                LOG(@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
-                kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
+                [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount]];
+//                kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
+                [self doit:progBLK p1:[NSNumber numberWithLongLong:downloadProgress.totalUnitCount] p2:[NSNumber numberWithLongLong:downloadProgress.completedUnitCount]];
             } destination: ^NSURL *_Nonnull (NSURL *_Nonnull targetPath, NSURLResponse *_Nonnull response) {
                 return [NSURL fileURLWithPath:path];
             } completionHandler: ^(NSURLResponse *_Nonnull response, NSURL *_Nullable filePath, NSError *_Nullable error) {
-                LOG(@"网络请求(下载):%d | 成功 | LOCAL:%@", uniq, filePath);
+                [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 成功 | LOCAL:%@", uniq, filePath]];
                 error ? kBLK3(fadBLK, error, response, nil) : kBLK2(sucBLK, response, nil);
                 dispatch_semaphore_signal(sem);
             }];
         }
         else {
-            LOG(@"网络请求(下载):%d | 开始 | URL:%@", uniq, self.url);
+            [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 开始 | URL:%@", uniq, self.url]];
             self.task = [self.manager downloadTaskWithRequest:req progress: ^(NSProgress *_Nonnull downloadProgress) {
-                LOG(@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
+                [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount]];
                 kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
             } destination: ^NSURL *_Nonnull (NSURL *_Nonnull targetPath, NSURLResponse *_Nonnull response) {
                 return [NSURL fileURLWithPath:path];
             } completionHandler: ^(NSURLResponse *_Nonnull response, NSURL *_Nullable filePath, NSError *_Nullable error) {
-                LOG(@"网络请求(下载):%d | 成功 | LOCAL:%@", uniq, filePath);
+                [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 成功 | LOCAL:%@", uniq, filePath]];
                 error ? kBLK3(fadBLK, error, response, nil) : kBLK2(sucBLK, response, nil);
                 dispatch_semaphore_signal(sem);
             }];
         }
         [self.task resume];
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-        LOG(@"网络请求(下载):%d | 完成 |  此次请求耗时:%.3f's", uniq, CACurrentMediaTime() - stTime);
-        kBLK0(complete);
+        [self Log:[NSString stringWithFormat:@"网络请求(下载):%d | 完成 |  此次请求耗时:%.3f's", uniq, CACurrentMediaTime() - stTime]];
+//        kBLK0(complete);
+        [self doit:complete];
     };
     [self.queue addOperation:self.operation];
     return self;
 }
 
 - (GLRequest *)readFromFileDatas:(NSDictionary<NSString *, id> *)fileDatas progress:(void (^)(float))progBLK success:(void (^)(NSURLResponse *, id))sucBLK failure:(void (^)(NSError *, NSURLResponse *, id))fadBLK complete:(void (^)(void))complete {
-    @weak(self)
+    __weak typeof(self) wself = self;
     self.operation.operationBlock = ^{
-        @strong(self)
+        __strong typeof(wself) self = wself;
         [self resetHeader];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000);
-        LOG(@"网络请求(上传):%d | 开始 | URL:%@", uniq, self.url);
+        [self Log:[NSString stringWithFormat:@"网络请求(上传):%d | 开始 | URL:%@", uniq, self.url]];
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-                
+
         self.task = [self.manager POST:self.url parameters:nil headers:[self._config requestHeaderWithPath:self._path] constructingBodyWithBlock: ^(id<AFMultipartFormData>  _Nonnull formData) {
             for (NSString *key in [fileDatas allKeys]) {
                 if ([fileDatas[key] isKindOfClass:[NSDictionary class]]) {
@@ -648,10 +708,12 @@ static NSMutableSet *kAssociatedList;
                 }
             }
         } progress: ^(NSProgress *_Nonnull uploadProgress) {
-            LOG(@"网络请求(上传):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
-            kBLK1(progBLK, (double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+            [self Log:[NSString stringWithFormat:@"网络请求(上传):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount]];
+//            kBLK1(progBLK, (double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+            [self doit:progBLK
+                    p1:(double)uploadProgress.completedUnitCount / uploadProgress.totalUnitCount];
         } success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
-            LOG(@"网络请求(上传):%d | 成功 | RESP:%@", uniq, responseObject);
+            [self Log:[NSString stringWithFormat:@"网络请求(上传):%d | 成功 | RESP:%@", uniq, responseObject]];
             /* 新解密方案 */
             if (self.obstructDecode == NO && [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
                 responseObject = [self._config responseObjectForResponse:(NSHTTPURLResponse *)task.response data:responseObject];
@@ -666,13 +728,14 @@ static NSMutableSet *kAssociatedList;
             }
             dispatch_semaphore_signal(sem);
         } failure: ^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
-            LOG(@"网络请求(上传):%d | 失败 | ERR:%@", uniq, error);
+            [self Log:[NSString stringWithFormat:@"网络请求(上传):%d | 失败 | ERR:%@", uniq, error]];
             [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
             dispatch_semaphore_signal(sem);
         }];
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-        LOG(@"网络请求(上传):%d | 完成 | 共耗时:%.3f's", uniq, CACurrentMediaTime() - stTime);
-        kBLK0(complete);
+        [self Log:[NSString stringWithFormat:@"网络请求(上传):%d | 完成 | 共耗时:%.3f's", uniq, CACurrentMediaTime() - stTime]];
+//        kBLK0(complete);
+        [self doit:complete];
     };
     [self.queue addOperation:self.operation];
     return self;
