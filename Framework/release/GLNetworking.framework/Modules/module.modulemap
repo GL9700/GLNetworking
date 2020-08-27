@@ -1,0 +1,6 @@
+framework module GLNetworking {
+  umbrella header "GLNetworking.h"
+
+  export *
+  module * { export * }
+}
