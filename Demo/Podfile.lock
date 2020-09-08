@@ -1,0 +1,41 @@
+PODS:
+  - AFNetworking (4.0.1):
+    - AFNetworking/NSURLSession (= 4.0.1)
+    - AFNetworking/Reachability (= 4.0.1)
+    - AFNetworking/Security (= 4.0.1)
+    - AFNetworking/Serialization (= 4.0.1)
+    - AFNetworking/UIKit (= 4.0.1)
+  - AFNetworking/NSURLSession (4.0.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (4.0.1)
+  - AFNetworking/Security (4.0.1)
+  - AFNetworking/Serialization (4.0.1)
+  - AFNetworking/UIKit (4.0.1):
+    - AFNetworking/NSURLSession
+  - GLNetworking (1.0.0):
+    - AFNetworking
+    - YYModel
+  - YYModel (1.0.4)
+
+DEPENDENCIES:
+  - GLNetworking (from `../Source/GLNetworking.podspec`)
+
+SPEC REPOS:
+  trunk:
+    - AFNetworking
+    - YYModel
+
+EXTERNAL SOURCES:
+  GLNetworking:
+    :path: "../Source/GLNetworking.podspec"
+
+SPEC CHECKSUMS:
+  AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
+  GLNetworking: 6faa07cd794a982e7e0dc2b464c9ee044d173cf4
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+
+PODFILE CHECKSUM: 6af1e9942521c20188493f5b4b3b5d66edd5339f
+
+COCOAPODS: 1.9.3
