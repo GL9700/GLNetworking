@@ -7,7 +7,5 @@ target 'GLNetworking_Example' do
 
   target 'GLNetworking_Tests' do
     inherit! :search_paths
-
-    
   end
 end

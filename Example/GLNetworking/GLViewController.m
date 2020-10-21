@@ -8,6 +8,7 @@
 
 #import "GLViewController.h"
 #import "GLGlobalNetworkingConfig.h"
+#import <GLNetworking.h>
 
 // MARK: - 自定义config，继承自globalConfig
 @interface CustomConfig01: GLGlobalNetworkingConfig
@@ -143,7 +144,7 @@
 
 - (void)request_advanced_03 {
     for (int i=0; i<50; i++) {
-        [GLNetworking.GET().priority(i%3==0?WDPriorityHigh:WDPriorityLow) success:^(NSURLResponse *header, id response) {
+        [GLNetworking.GET().priority(i%3==0?GLPriorityHigh:GLPriorityLow) success:^(NSURLResponse *header, id response) {
             NSLog(@"-- success -->> 序号i:%d, %@", i, i%3==0?@"[priority:High]":@"[priority:low]");
         } failure:^(NSError *error, NSURLResponse *response, id data) {
             NSLog(@"-- error:%@ --", error);

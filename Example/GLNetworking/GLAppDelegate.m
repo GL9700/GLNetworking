@@ -7,12 +7,12 @@
 //
 
 #import "GLAppDelegate.h"
-
+#import "GLViewController.h"
 @implementation GLAppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     [self.window makeKeyAndVisible];
-    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[WDViewController new]];
+    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[GLViewController new]];
     return YES;
 }
 @end
