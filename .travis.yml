@@ -9,7 +9,7 @@ language: objective-c
 
 before_install:
 - gem install cocoapods # Since Travis is not always on latest version
-- pod install --project-directory=Example
+- pod install --project-directory=Example --repo-update
 
 script:
 - xcodebuild -workspace Example/GLNetworking.xcworkspace -scheme GLNetworking-Example -sdk iphonesimulator
