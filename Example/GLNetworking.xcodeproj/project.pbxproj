@@ -66,7 +66,7 @@
 		78B890E162BF7F91626DCA43 /* Pods_GLNetworking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GLNetworking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		864913BAD999CB35819FFFC2 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		EAD81BE5BC960E7252A60FB9 /* Pods-GLNetworking_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GLNetworking_Tests.debug.xcconfig"; path = "Target Support Files/Pods-GLNetworking_Tests/Pods-GLNetworking_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		EB83F9EDBA420EB62A74B80C /* GLNetworking.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = GLNetworking.podspec; path = ../GLNetworking.podspec; sourceTree = "<group>"; };
+		EB83F9EDBA420EB62A74B80C /* GLNetworking.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = GLNetworking.podspec; path = ../GLNetworking.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		F5A5DB4CA79AE615A112ECE8 /* Pods_GLNetworking_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GLNetworking_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 

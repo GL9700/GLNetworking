@@ -39,6 +39,7 @@ static NSOperationQueue *requestQueue;
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "www.baidu.com");
     SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
+    CFRelease(reachabilityRef);
     return (flags != 0);
 }
 
