@@ -143,6 +143,8 @@ complete:^{
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ##   History
+* 2.8.2 - 2020-12-14
+    做了https基本容错
 * 2.7.0 - 2020-06-02
     使用了AFN4+的版本，由于AFN3里么使用了UIWebView，无法进行提交
 * 2.6.0 - 2020-04-10

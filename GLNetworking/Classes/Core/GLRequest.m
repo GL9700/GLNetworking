@@ -49,6 +49,7 @@ static NSMutableSet *kAssociatedList;
 @interface GLRequest ()
 {
     __block BOOL ignoreCache;
+    dispatch_once_t onceToken;
 }
 @property (nonatomic, strong) GLOperation *operation;
 @property (nonatomic, strong) AFHTTPSessionManager *manager;
@@ -168,7 +169,9 @@ static NSMutableSet *kAssociatedList;
             url.scheme = @"http";
         }
         if ([url.scheme isEqualToString:@"https"]) {
-            [self securityPolicy];
+            dispatch_once(&onceToken, ^{
+                [self securityPolicy];
+            });
         }
         // host
         // <NSURLComponents 0x28153cfa0>
@@ -226,10 +229,12 @@ static NSMutableSet *kAssociatedList;
 
 /** https */
 - (void)securityPolicy {
-    self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
-        AFSecurityPolicy *sp = [self._config developmentServerSecurity];
-        self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    if(self.manager){
+        self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
+            AFSecurityPolicy *sp = [self._config developmentServerSecurity];
+            self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        }
     }
 }
 

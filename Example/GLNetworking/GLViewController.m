@@ -10,14 +10,35 @@
 #import "GLGlobalNetworkingConfig.h"
 #import <GLNetworking.h>
 
+
+
+@interface CustomConfig03:NSObject <GLNetworkPotocol>
+
+@end
+    
+@implementation CustomConfig03
+- (NSString *)requestHost {
+    return @"https://hrss-api.testing1.wdeduc.com";
+}
+- (NSDictionary *)requestHeaderWithPath:(NSString *)path {
+    return @{
+        @"pageNum":@"1",
+        @"pageSize":@"2"
+    };
+}
+@end
+
+
 // MARK: - 自定义config，继承自globalConfig
 @interface CustomConfig01: GLGlobalNetworkingConfig
 @end
 @implementation CustomConfig01
 - (NSDictionary *)requestHeaderWithPath:(NSString *)path {
     return @{
-        @"userId":@"123456",
-        @"Content-Type":@"text/plain"
+        @"actor":@"46",
+        @"branch":@"1",
+        @"organ":@"1",
+        @"token":@"606DF0B47240A7C1A681495549928221-1"
     };
 }
 @end
@@ -59,7 +80,8 @@
 - (instancetype)init {
     if((self = [super init])) {
         self.title = @"首页";
-        [GLNetworking managerWithConfig:[GLGlobalNetworkingConfig new]];
+//        [GLNetworking managerWithConfig:[GLGlobalNetworkingConfig new]];
+        [GLNetworking managerWithConfig:[CustomConfig03 new]];
     }
     return self;
 }
@@ -108,7 +130,6 @@
         NSLog(@"-- complete --");
     }];
 }
-
 - (void)request_02 {
     NSMutableDictionary<NSString *, NSString *> * params = [@{} mutableCopy];
     params[@"wd"] = @"apple";
@@ -131,7 +152,6 @@
         NSLog(@"-- complete --");
     }];
 }
-
 - (void)request_advanced_02 {
     [GLNetworking.GET().config([CustomConfig01 new]) success:^(NSURLResponse *header, id response) {
         NSLog(@"-- success -->> dataLength:%ld", ((NSData *)response).length);
@@ -141,7 +161,6 @@
         NSLog(@"-- complete --");
     }];
 }
-
 - (void)request_advanced_03 {
     for (int i=0; i<50; i++) {
         [GLNetworking.GET().priority(i%3==0?GLPriorityHigh:GLPriorityLow) success:^(NSURLResponse *header, id response) {
@@ -162,6 +181,26 @@
         NSLog(@"-- complete --");
     }];
 }
+
+- (void)req_test_01 {
+    [GLNetworking.GET().path(@"train/v1/train/student/trainList").params(@{@"pageNum":@"1",@"pageSize":@"2"}) success:^(NSURLResponse *header, id response) {
+        NSLog(@"--suc--");
+    } failure:^(NSError *error, NSURLResponse *response, id data) {
+        NSLog(@"--fad--");
+    } complete:^{
+        NSLog(@"--cpt--");
+    }];
+}
+- (void)req_test_02 {
+    [GLNetworking.GET().path(@"usercenter/v1/user/findUserOrganList") success:^(NSURLResponse *header, id response) {
+        NSLog(@"--suc--");
+    } failure:^(NSError *error, NSURLResponse *response, id data) {
+        NSLog(@"--fad--");
+    } complete:^{
+        NSLog(@"--cpt--");
+    }];
+}
+
 
 // MARK: - Lazy property
 - (NSArray<UIButton *> *)buttons {
@@ -190,7 +229,15 @@
             [self createButtonWithTitle:@"高级请求 | 返回数据拦截"
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
-                                 action:@selector(request_advanced_04)]
+                                 action:@selector(request_advanced_04)],
+            [self createButtonWithTitle:@"回溯崩溃数据请求01"
+                              fontColor:[UIColor whiteColor]
+                        backgroundColor:[UIColor blueColor]
+                                 action:@selector(req_test_01)],
+            [self createButtonWithTitle:@"回溯崩溃数据请求02"
+                              fontColor:[UIColor whiteColor]
+                        backgroundColor:[UIColor blueColor]
+                                 action:@selector(req_test_02)]
         ];
     }
     return _buttons;

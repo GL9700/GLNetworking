@@ -11,15 +11,6 @@ typedef BOOL (^BLKIsOnline)(void);
 @class AFSecurityPolicy;
 
 @protocol GLNetworkPotocol <NSObject>
-//@required
-//@property (nonatomic, strong) NSString *host;           //host地址
-//@property (nonatomic, assign) NSUInteger timeout;       // 超时
-//@property (nonatomic, strong) NSDictionary *header;     // 请求头
-//
-//@optional
-//@property (nonatomic, assign) BOOL isDebug;         // YES 输出debug信息
-//@property (nonatomic, assign) BOOL isJsonParams;    // 使用JSON格式进行body传递（默认NO），且自动设定Content-Type为Application/Json
-//@property (nonatomic, strong) NSSet *cacheList;     // 缓存名单
 
 @required
 /** host地址 */
