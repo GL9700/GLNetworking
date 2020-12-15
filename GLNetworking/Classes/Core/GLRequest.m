@@ -49,7 +49,8 @@ static NSMutableSet *kAssociatedList;
 @interface GLRequest ()
 {
     __block BOOL ignoreCache;
-    dispatch_once_t onceToken;
+    dispatch_once_t setSecurityPolicyToken;
+    dispatch_once_t setHeaderOnceToken;
 }
 @property (nonatomic, strong) GLOperation *operation;
 @property (nonatomic, strong) AFHTTPSessionManager *manager;
@@ -169,9 +170,7 @@ static NSMutableSet *kAssociatedList;
             url.scheme = @"http";
         }
         if ([url.scheme isEqualToString:@"https"]) {
-            dispatch_once(&onceToken, ^{
                 [self securityPolicy];
-            });
         }
         // host
         // <NSURLComponents 0x28153cfa0>
@@ -209,19 +208,23 @@ static NSMutableSet *kAssociatedList;
 
 /** 设置请求头 */
 - (void)resetHeader {
-    self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
-        [self._config isJsonParams] ? self.manager.requestSerializer = [AFJSONRequestSerializer serializer] : nil;
-    }
-    self.manager.requestSerializer.timeoutInterval = 10;
-    if ([self._config respondsToSelector:@selector(requestTimeout)]) {
-        self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
-    }
-    if ([self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
-        NSDictionary *header = [self._config requestHeaderWithPath:self._path];
-        for (NSString *key in [header allKeys]) {
-            [self.manager.requestSerializer setValue:[header objectForKey:key] forHTTPHeaderField:key];
-        }
+    if(self.manager){
+        dispatch_once(&setHeaderOnceToken, ^{
+            self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+            if ([self._config respondsToSelector:@selector(isJsonParams)]) {
+                [self._config isJsonParams] ? self.manager.requestSerializer = [AFJSONRequestSerializer serializer] : nil;
+            }
+            self.manager.requestSerializer.timeoutInterval = 10;
+            if ([self._config respondsToSelector:@selector(requestTimeout)]) {
+                self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
+            }
+            if ([self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
+                NSDictionary *header = [self._config requestHeaderWithPath:self._path];
+                for (NSString *key in [header allKeys]) {
+                    [self.manager.requestSerializer setValue:[header objectForKey:key] forHTTPHeaderField:key];
+                }
+            }
+        });
     }
 }
 
@@ -229,12 +232,14 @@ static NSMutableSet *kAssociatedList;
 
 /** https */
 - (void)securityPolicy {
-    if(self.manager){
-        self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-        if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
-            AFSecurityPolicy *sp = [self._config developmentServerSecurity];
-            self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-        }
+    if(self.manager) {
+        dispatch_once(&setSecurityPolicyToken, ^{
+            self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
+                AFSecurityPolicy *sp = [self._config developmentServerSecurity];
+                self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+            }
+        });
     }
 }
 
