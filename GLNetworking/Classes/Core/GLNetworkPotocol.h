@@ -36,8 +36,6 @@ typedef BOOL (^BLKIsOnline)(void);
 /** Log信息 */
 - (void)logMessage:(NSString *)msg;
 
-@optional
-
 /**
 * @brief 加密（编码方案）
 * @return 加密后的值，供网络请求使用
@@ -76,4 +74,15 @@ typedef BOOL (^BLKIsOnline)(void);
 //- (BOOL)invocationAfterRequestWS:(NSString *)webserviceORpath success:(id)response toUserFailedInfo:(NSDictionary *__autoreleasing *)userInfo;
 /** HTTPS local server */
 - (AFSecurityPolicy *)developmentServerSecurity;
+
+/**
+ * --------------------
+ * ------Advanced------
+ * --------------------
+ */
+/// Response 可以接收的 Content-Types
+- (NSSet<NSString *> *)responseAllowContentTypes;
+/// Response 可以接收的 Status Code
+- (NSIndexSet *)responseAllowStatusCodes;
+
 @end

@@ -10,6 +10,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "GLOperation.h"
 #import "AFHTTPSessionManager.h"
+#import "GLNetworkPotocol.h"
 
 #if __has_include(<GLCacheData.h>)
 #import <GLCacheData.h>
@@ -206,26 +207,40 @@ static NSMutableSet *kAssociatedList;
     return _url;
 }
 
-/** 设置请求头 */
-- (void)resetHeader {
+/** 使设置生效 */
+- (void)setupConfig {
     if(self.manager){
         dispatch_once(&setHeaderOnceToken, ^{
-            self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-            if ([self._config respondsToSelector:@selector(isJsonParams)]) {
-                [self._config isJsonParams] ? self.manager.requestSerializer = [AFJSONRequestSerializer serializer] : nil;
-            }
-            self.manager.requestSerializer.timeoutInterval = 10;
-            if ([self._config respondsToSelector:@selector(requestTimeout)]) {
-                self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
-            }
-            if ([self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
-                NSDictionary *header = [self._config requestHeaderWithPath:self._path];
-                for (NSString *key in [header allKeys]) {
-                    [self.manager.requestSerializer setValue:[header objectForKey:key] forHTTPHeaderField:key];
-                }
-            }
+            [self setRequestConfig];
+            [self setResponseConfig];
         });
     }
+}
+- (void)setRequestConfig {
+    self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
+        self.manager.requestSerializer = [self._config isJsonParams] ? [AFJSONRequestSerializer serializer] : self.manager.requestSerializer;
+    }
+    self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
+    if ([self._config respondsToSelector:@selector(requestTimeout)]) {
+        self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
+    }
+    if ([self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
+        NSDictionary *header = [self._config requestHeaderWithPath:self._path];
+        for (NSString *key in [header allKeys]) {
+            [self.manager.requestSerializer setValue:[header objectForKey:key] forHTTPHeaderField:key];
+        }
+    }
+}
+- (void)setResponseConfig {
+    AFHTTPResponseSerializer *respSerial = self.manager.responseSerializer ? self.manager.responseSerializer : [AFHTTPResponseSerializer serializer];
+    if([self._config respondsToSelector: @selector(responseAllowContentTypes)]) {
+        respSerial.acceptableContentTypes = [self._config responseAllowContentTypes];
+    }
+    if([self._config respondsToSelector: @selector(responseAllowStatusCodes)]) {
+        respSerial.acceptableStatusCodes = [self._config responseAllowStatusCodes];
+    }
+    self.manager.responseSerializer = respSerial;
 }
 
 #pragma mark- Actions
@@ -450,7 +465,7 @@ static NSMutableSet *kAssociatedList;
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
-        [self resetHeader];
+        [self setupConfig];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000) + arc4random() % 10;
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
@@ -595,7 +610,7 @@ static NSMutableSet *kAssociatedList;
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
-        [self resetHeader];
+        [self setupConfig];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000);
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
@@ -638,7 +653,7 @@ static NSMutableSet *kAssociatedList;
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
-        [self resetHeader];
+        [self setupConfig];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000);
         LOG(@"网络请求(上传):%d | 开始 | URL:%@", uniq, self.url);
