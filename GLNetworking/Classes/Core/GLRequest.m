@@ -212,6 +212,13 @@ static NSMutableSet *kAssociatedList;
     dispatch_once(&onceFlagForConfig, ^{
         @synchronized (self.manager) {
             if(self.manager) {
+                if(self.manager.requestSerializer==nil) {
+                    self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+                    self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
+                }
+                if(self.manager.responseSerializer==nil){
+                    self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+                }
                 [self setRequestHeader];
                 [self setRequestConfig];
                 [self setResponseConfig];
@@ -229,21 +236,16 @@ static NSMutableSet *kAssociatedList;
     }
 }
 - (void)setRequestConfig {
-    if(self.manager.requestSerializer==nil) {
-        self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-        self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
-    }
     if ([self._config respondsToSelector:@selector(isJsonParams)]) {
-        self.manager.requestSerializer = [self._config isJsonParams] ? [AFJSONRequestSerializer serializer] : self.manager.requestSerializer;
+        if([self._config isJsonParams] && ![self.manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]]){
+            self.manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        }
     }
     if ([self._config respondsToSelector:@selector(requestTimeout)]) {
         self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
     }
 }
 - (void)setResponseConfig {
-    if(self.manager.responseSerializer==nil){
-        self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    }
     if([self._config respondsToSelector: @selector(responseAllowContentTypes)]) {
         self.manager.responseSerializer.acceptableContentTypes = [self._config responseAllowContentTypes];
     }
@@ -258,12 +260,14 @@ static NSMutableSet *kAssociatedList;
 - (void)securityPolicy {
     dispatch_once(&onceFlagForHttps, ^{
         @synchronized (self.manager) {
-            if(self.manager.responseSerializer == nil) {
-                self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            }
-            if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
-                AFSecurityPolicy *sp = [self._config developmentServerSecurity];
-                self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+            if(self.manager) {
+                if(self.manager.responseSerializer == nil) {
+                    self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+                }
+                if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
+                    AFSecurityPolicy *sp = [self._config developmentServerSecurity];
+                    self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+                }
             }
         }
     });
