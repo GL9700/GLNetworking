@@ -217,11 +217,18 @@ static NSMutableSet *kAssociatedList;
     }
 }
 - (void)setRequestConfig {
-    self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
-        self.manager.requestSerializer = [self._config isJsonParams] ? [AFJSONRequestSerializer serializer] : self.manager.requestSerializer;
+    if(self.manager.requestSerializer == nil || ![self.manager.requestSerializer isMemberOfClass:[AFHTTPRequestSerializer class]]){
+        self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
     }
-    self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
+    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
+        if(self.manager.requestSerializer == nil || ![self.manager.requestSerializer isMemberOfClass:[AFJSONRequestSerializer class]]){
+            if([self._config isJsonParams]){
+                self.manager.requestSerializer = [AFJSONRequestSerializer serializer];
+                self.manager.requestSerializer.timeoutInterval = 10;
+            }
+        }
+    }
     if ([self._config respondsToSelector:@selector(requestTimeout)]) {
         self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
     }
@@ -249,7 +256,9 @@ static NSMutableSet *kAssociatedList;
 - (void)securityPolicy {
     if(self.manager) {
         dispatch_once(&setSecurityPolicyToken, ^{
-            self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            if(self.manager.responseSerializer == nil || ![self.manager.responseSerializer isMemberOfClass:[AFHTTPResponseSerializer class]]) {
+                self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            }
             if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
                 AFSecurityPolicy *sp = [self._config developmentServerSecurity];
                 self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
