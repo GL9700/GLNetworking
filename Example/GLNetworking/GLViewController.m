@@ -183,13 +183,21 @@
 }
 
 - (void)req_test_01 {
-    [GLNetworking.GET().path(@"train/v1/train/student/trainList").params(@{@"pageNum":@"1",@"pageSize":@"2"}) success:^(NSURLResponse *header, id response) {
-        NSLog(@"--suc--");
-    } failure:^(NSError *error, NSURLResponse *response, id data) {
-        NSLog(@"--fad--");
-    } complete:^{
-        NSLog(@"--cpt--");
-    }];
+    for(int i=0;i<500;i++){
+        NSArray* confs = @[[CustomConfig01 new], [CustomConfig02 new], [CustomConfig03 new]];
+        int useConfIndex = random()%3;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSLog(@"增加请求%d", i);
+            [GLNetworking.POST().path(@"train/v1/train/student/trainList").params(@{@"pageNum":@"1",@"pageSize":@"2"}).config(confs[useConfIndex]) success:^(NSURLResponse *header, id response) {
+                NSLog(@"--suc--");
+            } failure:^(NSError *error, NSURLResponse *response, id data) {
+                NSLog(@"--fad--");
+            } complete:^{
+                NSLog(@"--cpt-%d-useConfig:%d", i, useConfIndex);
+            }];
+        });
+    }
+    NSLog(@"增加");
 }
 - (void)req_test_02 {
     [GLNetworking.GET().path(@"usercenter/v1/user/findUserOrganList") success:^(NSURLResponse *header, id response) {
@@ -230,11 +238,11 @@
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
                                  action:@selector(request_advanced_04)],
-            [self createButtonWithTitle:@"回溯崩溃数据请求01"
+            [self createButtonWithTitle:@"回溯崩溃数据请求01x10"
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
                                  action:@selector(req_test_01)],
-            [self createButtonWithTitle:@"回溯崩溃数据请求02"
+            [self createButtonWithTitle:@"回溯崩溃数据请求02x30"
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
                                  action:@selector(req_test_02)]

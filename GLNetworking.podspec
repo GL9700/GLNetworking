@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'GLNetworking'
-  s.version          = '2.9.0'
+  s.version          = '2.9.1'
   s.summary          = '极简 & 灵活 & 稳定 & 安全的iOS Objective-C网络请求库'
   s.description      = <<-DESC
     - 极简：使用仅一行语句，即可发送网络请求。

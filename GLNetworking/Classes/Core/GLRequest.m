@@ -50,8 +50,8 @@ static NSMutableSet *kAssociatedList;
 @interface GLRequest ()
 {
     __block BOOL ignoreCache;
-    dispatch_once_t setSecurityPolicyToken;
-    dispatch_once_t setHeaderOnceToken;
+    dispatch_once_t onceFlagForHttps;
+    dispatch_once_t onceFlagForConfig;
 }
 @property (nonatomic, strong) GLOperation *operation;
 @property (nonatomic, strong) AFHTTPSessionManager *manager;
@@ -171,7 +171,7 @@ static NSMutableSet *kAssociatedList;
             url.scheme = @"http";
         }
         if ([url.scheme isEqualToString:@"https"]) {
-                [self securityPolicy];
+            [self securityPolicy];
         }
         // host
         // <NSURLComponents 0x28153cfa0>
@@ -209,53 +209,64 @@ static NSMutableSet *kAssociatedList;
 
 /** 使设置生效 */
 - (void)setupConfig {
-    if(self.manager){
-        dispatch_once(&setHeaderOnceToken, ^{
-            [self setRequestConfig];
-            [self setResponseConfig];
-        });
-    }
+    dispatch_once(&onceFlagForConfig, ^{
+        @synchronized (self.manager) {
+            if(self.manager) {
+                [self setRequestHeader];
+                [self setRequestConfig];
+                [self setResponseConfig];
+            }
+        }
+    });
 }
-- (void)setRequestConfig {
-    self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
-        self.manager.requestSerializer = [self._config isJsonParams] ? [AFJSONRequestSerializer serializer] : self.manager.requestSerializer;
-    }
-    self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
-    if ([self._config respondsToSelector:@selector(requestTimeout)]) {
-        self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
-    }
-    if ([self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
+
+- (void)setRequestHeader {
+    if (self.manager.requestSerializer && [self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
         NSDictionary *header = [self._config requestHeaderWithPath:self._path];
         for (NSString *key in [header allKeys]) {
             [self.manager.requestSerializer setValue:[header objectForKey:key] forHTTPHeaderField:key];
         }
     }
 }
+- (void)setRequestConfig {
+    if(self.manager.requestSerializer==nil) {
+        self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
+    }
+    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
+        self.manager.requestSerializer = [self._config isJsonParams] ? [AFJSONRequestSerializer serializer] : self.manager.requestSerializer;
+    }
+    if ([self._config respondsToSelector:@selector(requestTimeout)]) {
+        self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
+    }
+}
 - (void)setResponseConfig {
-    AFHTTPResponseSerializer *respSerial = self.manager.responseSerializer ? self.manager.responseSerializer : [AFHTTPResponseSerializer serializer];
+    if(self.manager.responseSerializer==nil){
+        self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    }
     if([self._config respondsToSelector: @selector(responseAllowContentTypes)]) {
-        respSerial.acceptableContentTypes = [self._config responseAllowContentTypes];
+        self.manager.responseSerializer.acceptableContentTypes = [self._config responseAllowContentTypes];
     }
     if([self._config respondsToSelector: @selector(responseAllowStatusCodes)]) {
-        respSerial.acceptableStatusCodes = [self._config responseAllowStatusCodes];
+        self.manager.responseSerializer.acceptableStatusCodes = [self._config responseAllowStatusCodes];
     }
-    self.manager.responseSerializer = respSerial;
 }
 
 #pragma mark- Actions
 
 /** https */
 - (void)securityPolicy {
-    if(self.manager) {
-        dispatch_once(&setSecurityPolicyToken, ^{
-            self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    dispatch_once(&onceFlagForHttps, ^{
+        @synchronized (self.manager) {
+            if(self.manager.responseSerializer == nil) {
+                self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            }
             if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
                 AFSecurityPolicy *sp = [self._config developmentServerSecurity];
                 self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
             }
-        });
-    }
+        }
+    });
 }
 
 /** 加密参数 */
