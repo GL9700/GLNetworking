@@ -23,16 +23,33 @@ static NSOperationQueue *requestQueue;
         instance = [[GLNetworking alloc]init];
         globalConfig = config;
         manager = [AFHTTPSessionManager manager];
-        if ([config respondsToSelector:@selector(isJsonParams)]) {
-            if (config.isJsonParams) {
-                manager.requestSerializer = [AFJSONRequestSerializer serializer];
-            }
-        }
-        manager.requestSerializer.timeoutInterval = [config respondsToSelector:@selector(requestTimeout)] ? [config requestTimeout] : 10;
+        [self setupConfig:globalConfig toManager:manager];
         requestQueue = [[NSOperationQueue alloc]init];
         requestQueue.maxConcurrentOperationCount = 4;
     });
     return instance;
+}
+/// 配置默认Config
++ (void)setupConfig:(id<GLNetworkPotocol>)conf toManager:(AFHTTPSessionManager *)man {
+    man.requestSerializer = [AFHTTPRequestSerializer serializer];
+    if ([conf respondsToSelector:@selector(isJsonParams)]) {
+        if ([conf isJsonParams]) {
+            man.requestSerializer = [AFJSONRequestSerializer serializer];
+        }
+    }
+    if([conf respondsToSelector:@selector(requestTimeout)]){
+        man.requestSerializer.timeoutInterval = [conf requestTimeout];
+    }else{
+        man.requestSerializer.timeoutInterval = 10;
+    }
+    
+    man.responseSerializer = [AFHTTPResponseSerializer serializer];
+    if([conf respondsToSelector: @selector(responseAllowContentTypes)]) {
+        man.responseSerializer.acceptableContentTypes = [conf responseAllowContentTypes];
+    }
+    if([conf respondsToSelector: @selector(responseAllowStatusCodes)]) {
+        man.responseSerializer.acceptableStatusCodes = [conf responseAllowStatusCodes];
+    }
 }
 
 + (BOOL)currentNetStatus {
