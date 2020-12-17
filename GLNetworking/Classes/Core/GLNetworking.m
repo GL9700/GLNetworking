@@ -6,7 +6,7 @@
 //
 
 #import "GLNetworking.h"
-#import "AFHTTPSessionManager.h"
+#import <AFNetworking/AFHTTPSessionManager.h>
 
 #define kMaxConcurrentCount 10
 

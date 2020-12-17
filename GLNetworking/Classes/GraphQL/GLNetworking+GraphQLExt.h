@@ -6,7 +6,7 @@
 //
 
 #import "GLNetworking.h"
-#import "NSObject+GraphQLExt.h"
+#import <NSObject+GraphQLExt.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

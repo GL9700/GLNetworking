@@ -143,6 +143,10 @@ complete:^{
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ##   History
+
+* 2.9.1～2.9.2 - 2020-12-17
+    改变引入方式
+    针对Manager配置的Bug进行修复
 * 2.9.0 - 2020-12-16
     `GLNetworkProtocol`：增加了服务器响应时stateCode和contentType是否允许的配置方案
 * 2.8.3 - 2020-12-15

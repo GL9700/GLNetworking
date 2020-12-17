@@ -8,9 +8,9 @@
 #import "GLRequest.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <SystemConfiguration/SystemConfiguration.h>
-#import "GLOperation.h"
-#import "AFHTTPSessionManager.h"
-#import "GLNetworkPotocol.h"
+#import <GLOperation.h>
+#import <AFNetworking/AFHTTPSessionManager.h>
+#import <GLNetworkPotocol.h>
 
 #if __has_include(<GLCacheData.h>)
 #import <GLCacheData.h>
