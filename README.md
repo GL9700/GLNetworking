@@ -144,28 +144,40 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ##   History
 
+* 2.9.3 - 2020-12-28
+    * fix: GLRequest 里赋值 requestHeader的时候，如果数组项为空，则会导致Crash的兼容性问题 
+
 * 2.9.1～2.9.2 - 2020-12-17
-    改变引入方式
-    针对Manager配置的Bug进行修复
+    * 改变引入方式
+    * 针对Manager配置的Bug进行修复
+
 * 2.9.0 - 2020-12-16
-    `GLNetworkProtocol`：增加了服务器响应时stateCode和contentType是否允许的配置方案
+    * `GLNetworkProtocol`：增加了服务器响应时stateCode和contentType是否允许的配置方案
+
 * 2.8.3 - 2020-12-15
-    针对可能存在的Bug，做容错处理
+    * 针对可能存在的Bug，做容错处理
+
 * 2.8.2 - 2020-12-14
-    做了https基本容错
+    * 做了https基本容错
+
 * 2.7.0 - 2020-06-02
-    使用了AFN4+的版本，由于AFN3里么使用了UIWebView，无法进行提交
+    * 使用了AFN4+的版本，由于AFN3里么使用了UIWebView，无法进行提交
+
 * 2.6.0 - 2020-04-10
-    暂时修复已知问题：由于此项目暂时依赖AFN3.x，但目前最新版本为4.x不兼容3.x的内容，所以暂时锁定依赖版本为“低于4.0”
+    * 暂时修复已知问题：由于此项目暂时依赖AFN3.x，但目前最新版本为4.x不兼容3.x的内容，所以暂时锁定依赖版本为“低于4.0”
+
 * 2.5.1 - 2020-04-03
-    优化关于地址拼接部分逻辑
-    修复数据接收到后的控制逻辑
+    * 优化关于地址拼接部分逻辑
+    * 修复数据接收到后的控制逻辑
+
 * 2.5.0
-    增加拦截的功能。现在可以拦截失败的请求，进行统一处理
+    * 增加拦截的功能。现在可以拦截失败的请求，进行统一处理
+    
 * 2.1.1
-    支持Json方式参数传递
+    * 支持Json方式参数传递
+    
 * 2.1.0
-    add GraphQL support
+    * add GraphQL support
 
 
 ## Requirements

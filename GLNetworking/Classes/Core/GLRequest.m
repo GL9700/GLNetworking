@@ -231,7 +231,10 @@ static NSMutableSet *kAssociatedList;
     if (self.manager.requestSerializer && [self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
         NSDictionary *header = [self._config requestHeaderWithPath:self._path];
         for (NSString *key in [header allKeys]) {
-            [self.manager.requestSerializer setValue:[header objectForKey:key] forHTTPHeaderField:key];
+            id headerValue = header[key];
+            if(headerValue != nil){
+                [self.manager.requestSerializer setValue:headerValue forHTTPHeaderField:key];
+            }
         }
     }
 }
