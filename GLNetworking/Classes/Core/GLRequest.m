@@ -18,13 +18,15 @@
 
 #define weak(o)                autoreleasepool {} __weak typeof(o) o ## Weak = o;
 #define strong(o)              autoreleasepool {} __strong typeof(o) o = o ## Weak;
-#define LOG(str, ...)  [self._config respondsToSelector:@selector(logMessage:)] ? [self._config logMessage:[NSString stringWithFormat:str, ## __VA_ARGS__]] : nil
+#define LOG(str, ...)          [self._config respondsToSelector:@selector(logMessage:)] ? [self._config logMessage:[NSString stringWithFormat:str, ## __VA_ARGS__]] : nil
 #define kBLK0(blk)             self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(); }) : nil
 #define kBLK1(blk, p1)         self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1); }) : nil
 #define kBLK2(blk, p1, p2)     self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2); }) : nil
 #define kBLK3(blk, p1, p2, p3) self.isCancel == NO ? dispatch_async(dispatch_get_main_queue(), ^{ blk == nil ? : blk(p1, p2, p3); }) : nil
 
-const char* methodList[] = {"POST", "GET", "DELETE", "PUT"};
+const char *methodList[] = {
+    "POST", "GET", "DELETE", "PUT"
+};
 
 static NSMutableSet *kAssociatedList;
 
@@ -54,7 +56,8 @@ static NSMutableSet *kAssociatedList;
     dispatch_once_t onceFlagForConfig;
 }
 @property (nonatomic, strong) GLOperation *operation;
-@property (nonatomic, strong) AFHTTPSessionManager *manager;
+@property (nonatomic, strong) AFHTTPSessionManager *managerNormal;
+@property (nonatomic, strong) AFHTTPSessionManager *managerJson;
 @property (nonatomic, assign) BOOL isCancel;
 @property (nonatomic, assign) float _priority;
 @property (nonatomic, strong) id<GLNetworkPotocol> _config;
@@ -104,6 +107,13 @@ static NSMutableSet *kAssociatedList;
     return ^(id<GLNetworkPotocol> conf) {
                if (conf != nil) {
                    self._config = conf;
+                   if([self._config respondsToSelector:@selector(requestTimeout)]) {
+                       if([self._config respondsToSelector:@selector(isJsonParams)] && [self._config isJsonParams]==YES) {
+                           self.managerJson.requestSerializer.timeoutInterval = [self._config requestTimeout];
+                       }else{
+                           self.managerNormal.requestSerializer.timeoutInterval = [self._config requestTimeout];
+                       }
+                   }
                }
                return self;
     };
@@ -208,60 +218,25 @@ static NSMutableSet *kAssociatedList;
 }
 
 /** 使设置生效 */
-- (void)setupConfig {
-    dispatch_once(&onceFlagForConfig, ^{
-        @synchronized (self.manager) {
-            if(self.manager) {
-                if(self.manager.requestSerializer==nil) {
-                    self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-                    self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
-                }
-                if(self.manager.responseSerializer==nil){
-                    self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-                }
-                [self setRequestHeader];
-                [self setRequestConfig];
-                [self setResponseConfig];
-            }
-        }
-    });
+- (AFHTTPSessionManager *)managerForConfig:(id<GLNetworkPotocol>)config {
+    AFHTTPSessionManager *manager = nil;
+    if([config respondsToSelector:@selector(isJsonParams)] && [config isJsonParams] == YES) {
+        manager = self.managerJson;
+    }else{
+        manager = self.managerNormal;
+    }
+    [self setupResponseInConfig:self._config inManager:manager];
+    return manager;
 }
 
-- (void)setRequestHeader {
-    if (self.manager.requestSerializer && [self._config respondsToSelector:@selector(requestHeaderWithPath:)]) {
-        NSDictionary *header = [self._config requestHeaderWithPath:self._path];
-        for (NSString *key in [header allKeys]) {
-            id headerValue = header[key];
-            if(headerValue != nil){
-                [self.manager.requestSerializer setValue:headerValue forHTTPHeaderField:key];
-            }
+- (void)setupResponseInConfig:(id<GLNetworkPotocol>)config inManager:(AFHTTPSessionManager *)manager {
+    if(manager && manager.responseSerializer) {
+        if ([config respondsToSelector:@selector(responseAllowContentTypes)]) {
+            manager.responseSerializer.acceptableContentTypes = [config responseAllowContentTypes];
         }
-    }
-}
-- (void)setRequestConfig {
-    if(self.manager.requestSerializer == nil || ![self.manager.requestSerializer isMemberOfClass:[AFHTTPRequestSerializer class]]){
-        self.manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-        self.manager.requestSerializer.timeoutInterval = 10;    // 默认10秒超时
-    }
-    if ([self._config respondsToSelector:@selector(isJsonParams)]) {
-        if(self.manager.requestSerializer == nil || ![self.manager.requestSerializer isMemberOfClass:[AFJSONRequestSerializer class]]){
-            if([self._config isJsonParams]){
-                self.manager.requestSerializer = [AFJSONRequestSerializer serializer];
-                self.manager.requestSerializer.timeoutInterval = 10;
-            }
-
+        if ([config respondsToSelector:@selector(responseAllowStatusCodes)]) {
+            manager.responseSerializer.acceptableStatusCodes = [config responseAllowStatusCodes];
         }
-    }
-    if ([self._config respondsToSelector:@selector(requestTimeout)]) {
-        self.manager.requestSerializer.timeoutInterval = [self._config requestTimeout];
-    }
-}
-- (void)setResponseConfig {
-    if([self._config respondsToSelector: @selector(responseAllowContentTypes)]) {
-        self.manager.responseSerializer.acceptableContentTypes = [self._config responseAllowContentTypes];
-    }
-    if([self._config respondsToSelector: @selector(responseAllowStatusCodes)]) {
-        self.manager.responseSerializer.acceptableStatusCodes = [self._config responseAllowStatusCodes];
     }
 }
 
@@ -269,23 +244,14 @@ static NSMutableSet *kAssociatedList;
 
 /** https */
 - (void)securityPolicy {
-    if(self.manager) {
-        dispatch_once(&onceFlagForHttps, ^{
-            if(self.manager.responseSerializer == nil || ![self.manager.responseSerializer isMemberOfClass:[AFHTTPResponseSerializer class]]) {
-                self.manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            }
-            if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
-                AFSecurityPolicy *sp = [self._config developmentServerSecurity];
-                self.manager.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-
-            }
-        });
+    if ([self._config respondsToSelector:@selector(developmentServerSecurity)]) {
+        AFSecurityPolicy *sp = [self._config developmentServerSecurity];
+        self.managerJson.securityPolicy = self.managerNormal.securityPolicy = sp ? sp : [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
     }
 }
 
 /** 加密参数 */
 - (NSDictionary *)encodeParams:(NSDictionary *)originParams ws:(NSString *)ws {
-    // 加密
     NSDictionary *encodedParam = originParams;
     if (self.obstructEncode == NO) {
         if ([self._config respondsToSelector:@selector(paramsProcessedWithOriginParams:path:)]) {
@@ -301,7 +267,7 @@ static NSMutableSet *kAssociatedList;
 /** 解析并转换数据 */
 - (id)analyResponse:(id)data withResponse:(NSURLResponse *)respheader {
     id resp = nil;
-    if (data != nil){
+    if (data != nil) {
         // 解密
         if (self.obstructDecode == NO && [self._config respondsToSelector:@selector(responseObjectForResponse:data:)]) {
             data = [self._config responseObjectForResponse:(NSHTTPURLResponse *)respheader data:data];
@@ -310,11 +276,11 @@ static NSMutableSet *kAssociatedList;
             // 尝试使用json解析Data
             resp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
             // json失败，尝试转换为字符串
-            if(resp == nil){
+            if (resp == nil) {
                 resp = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
             }
         }
-        if(resp == nil){
+        if (resp == nil) {
             resp = data;
         }
     }
@@ -490,7 +456,7 @@ static NSMutableSet *kAssociatedList;
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
-        [self setupConfig];
+        AFHTTPSessionManager *manager = [self managerForConfig:self._config];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000) + arc4random() % 10;
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
@@ -516,7 +482,7 @@ static NSMutableSet *kAssociatedList;
                 LOG(@"网络请求开始:%d | Method:%s | URL:%@ | path:%@ | params:%@", uniq, methodList[self.method], self.url, self._path, self._params);
                 switch (self.method) {
                     case GLMethodGET: {
-                        self.task = [self.manager GET:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull downloadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [manager GET:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull downloadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -535,7 +501,7 @@ static NSMutableSet *kAssociatedList;
                         break;
                     }
                     case GLMethodPOST: {
-                        self.task = [self.manager POST:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull uploadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [manager POST:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull uploadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -554,7 +520,7 @@ static NSMutableSet *kAssociatedList;
                         break;
                     }
                     case GLMethodPUT: {
-                        self.task = [self.manager PUT:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [manager PUT:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -573,7 +539,7 @@ static NSMutableSet *kAssociatedList;
                         break;
                     }
                     case GLMethodDELETE: {
-                        self.task = [self.manager DELETE:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                        self.task = [manager DELETE:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
                                 #if __has_include(<GLCacheData.h>)
@@ -635,13 +601,13 @@ static NSMutableSet *kAssociatedList;
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
-        [self setupConfig];
+        AFHTTPSessionManager *manager = [self managerForConfig:self._config];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000);
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
         if (resumeData != nil) {
             LOG(@"网络请求(下载):%d | 恢复 | URL:%@", uniq, self.url);
-            self.task = [self.manager downloadTaskWithResumeData:resumeData progress: ^(NSProgress *_Nonnull downloadProgress) {
+            self.task = [manager downloadTaskWithResumeData:resumeData progress: ^(NSProgress *_Nonnull downloadProgress) {
                 LOG(@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
                 kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
             } destination: ^NSURL *_Nonnull (NSURL *_Nonnull targetPath, NSURLResponse *_Nonnull response) {
@@ -654,7 +620,7 @@ static NSMutableSet *kAssociatedList;
         }
         else {
             LOG(@"网络请求(下载):%d | 开始 | URL:%@", uniq, self.url);
-            self.task = [self.manager downloadTaskWithRequest:req progress: ^(NSProgress *_Nonnull downloadProgress) {
+            self.task = [manager downloadTaskWithRequest:req progress: ^(NSProgress *_Nonnull downloadProgress) {
                 LOG(@"网络请求(下载):%d | 进度更新 | PROGRESS:%.2f", uniq, (double)downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
                 kBLK2(progBLK, downloadProgress.totalUnitCount, downloadProgress.completedUnitCount);
             } destination: ^NSURL *_Nonnull (NSURL *_Nonnull targetPath, NSURLResponse *_Nonnull response) {
@@ -678,13 +644,13 @@ static NSMutableSet *kAssociatedList;
     @weak(self)
     self.operation.operationBlock = ^{
         @strong(self)
-        [self setupConfig];
+        AFHTTPSessionManager *manager = [self managerForConfig:self._config];
         CFTimeInterval stTime = CACurrentMediaTime();
         int uniq = (int)((stTime - (int)stTime) * 1000);
         LOG(@"网络请求(上传):%d | 开始 | URL:%@", uniq, self.url);
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-                
-        self.task = [self.manager POST:self.url parameters:nil headers:[self._config requestHeaderWithPath:self._path] constructingBodyWithBlock: ^(id<AFMultipartFormData>  _Nonnull formData) {
+
+        self.task = [manager POST:self.url parameters:nil headers:[self._config requestHeaderWithPath:self._path] constructingBodyWithBlock: ^(id<AFMultipartFormData>  _Nonnull formData) {
             for (NSString *key in [fileDatas allKeys]) {
                 if ([fileDatas[key] isKindOfClass:[NSDictionary class]]) {
                     // 带名字类型

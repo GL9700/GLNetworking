@@ -10,48 +10,34 @@
 
 #define kMaxConcurrentCount 10
 
-static NSMutableSet *list;
-static id<GLNetworkPotocol> globalConfig;
-static AFHTTPSessionManager *manager;
-static NSOperationQueue *requestQueue;
+@interface GLNetworking ()
+@property (nonatomic) NSMutableSet *list;
+@property (nonatomic) id<GLNetworkPotocol> defaultConfig;
+@property (nonatomic) AFHTTPSessionManager *managerNormal;
+@property (nonatomic) AFHTTPSessionManager *managerJson;
+@property (nonatomic) NSOperationQueue *queue;
+@end
 
 @implementation GLNetworking
-+ (instancetype)managerWithConfig:(id<GLNetworkPotocol>)config {
+
++ (instancetype)defaultNetworking {
     static dispatch_once_t onceToken;
     static GLNetworking *instance;
     dispatch_once(&onceToken, ^{
-        instance = [[GLNetworking alloc]init];
-        globalConfig = config;
-        manager = [AFHTTPSessionManager manager];
-        [self setupConfig:globalConfig toManager:manager];
-        requestQueue = [[NSOperationQueue alloc]init];
-        requestQueue.maxConcurrentOperationCount = 4;
+        instance = [GLNetworking new];
     });
     return instance;
 }
-/// 配置默认Config
-+ (void)setupConfig:(id<GLNetworkPotocol>)conf toManager:(AFHTTPSessionManager *)man {
-    man.requestSerializer = [AFHTTPRequestSerializer serializer];
-    if ([conf respondsToSelector:@selector(isJsonParams)]) {
-        if ([conf isJsonParams]) {
-            man.requestSerializer = [AFJSONRequestSerializer serializer];
-        }
-    }
-    if([conf respondsToSelector:@selector(requestTimeout)]){
-        man.requestSerializer.timeoutInterval = [conf requestTimeout];
-    }else{
-        man.requestSerializer.timeoutInterval = 10;
-    }
-    
-    man.responseSerializer = [AFHTTPResponseSerializer serializer];
-    if([conf respondsToSelector: @selector(responseAllowContentTypes)]) {
-        man.responseSerializer.acceptableContentTypes = [conf responseAllowContentTypes];
-    }
-    if([conf respondsToSelector: @selector(responseAllowStatusCodes)]) {
-        man.responseSerializer.acceptableStatusCodes = [conf responseAllowStatusCodes];
-    }
+
++ (instancetype)managerWithConfig:(id<GLNetworkPotocol>)config {
+    GLNetworking *network = [GLNetworking defaultNetworking];
+    network.defaultConfig = config;
+    network.queue = [[NSOperationQueue alloc]init];
+    network.queue.maxConcurrentOperationCount = kMaxConcurrentCount;
+    return network;
 }
 
+/// 当前网络是否可用
 + (BOOL)currentNetStatus {
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "www.baidu.com");
@@ -60,28 +46,22 @@ static NSOperationQueue *requestQueue;
     return (flags != 0);
 }
 
-+ (NSMutableSet *)list {
-    if (list == nil) {
-        list = [[NSMutableSet alloc]init];
-    }
-    return list;
-}
-
-+ (GLRequest *)createRequest {
-    /** 思路:改用NSOperationQueue 来控制最大并发数 */
-    GLRequest *request = [[GLRequest alloc]initWithQueue:requestQueue];
+/// 创建 GLRequest
+- (GLRequest *)createRequest {
+    GLRequest *request = [[GLRequest alloc]initWithQueue:self.queue];
+    [request setValue:self.managerNormal forKey:@"managerNormal"];
+    [request setValue:self.managerJson forKey:@"managerJson"];
+    [request setValue:self.defaultConfig forKey:@"_config"]; // 设定默认
     request.netStatus = [GLNetworking currentNetStatus];
-    [request setValue:manager forKey:@"manager"];
-    @synchronized ([GLNetworking list]) {
-        [[GLNetworking list] addObject:request];
+    @synchronized (self.list) {
+        [self.list addObject:request];
     }
-    request.config(globalConfig);
     return request;
 }
 
 + (GLRequest *(^)(void))DELETE {
     return ^() {
-               GLRequest *req = [GLNetworking createRequest];
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                req.method = GLMethodDELETE;
                return req;
     };
@@ -89,7 +69,7 @@ static NSOperationQueue *requestQueue;
 
 + (GLRequest *(^)(void))PUT {
     return ^() {
-               GLRequest *req = [GLNetworking createRequest];
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                req.method = GLMethodPUT;
                return req;
     };
@@ -97,7 +77,7 @@ static NSOperationQueue *requestQueue;
 
 + (GLRequest *(^)(void))POST {
     return ^() {
-               GLRequest *req = [GLNetworking createRequest];
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                req.method = GLMethodPOST;
                return req;
     };
@@ -105,7 +85,7 @@ static NSOperationQueue *requestQueue;
 
 + (GLRequest *(^)(void))GET {
     return ^() {
-               GLRequest *req = [GLNetworking createRequest];
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                req.method = GLMethodGET;
                return req;
     };
@@ -113,14 +93,14 @@ static NSOperationQueue *requestQueue;
 
 + (GLRequest *(^)(void))UPLOAD {
     return ^() {
-               GLRequest *req = [GLNetworking createRequest];
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                return req;
     };
 }
 
 + (GLRequest *(^)(void))DOWNLOAD {
     return ^() {
-               GLRequest *req = [GLNetworking createRequest];
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                return req;
     };
 }
@@ -130,16 +110,52 @@ static NSOperationQueue *requestQueue;
         if (requests != nil) {
             for (GLRequest *req in requests) {
                 [req cancelTaskWhenDownloadUseBLK:nil];
-                if (req != nil) [list removeObject:req];
+                if (req != nil) {
+                    [[GLNetworking defaultNetworking].list removeObject:req];
+                }
             }
         }
         else {
-            for (GLRequest *req in list) {
+            for (GLRequest *req in [GLNetworking defaultNetworking].list) {
                 [req cancelTaskWhenDownloadUseBLK:nil];
             }
-            [list removeAllObjects];
+            [[GLNetworking defaultNetworking].list removeAllObjects];
         }
     }
 }
 
+- (NSMutableSet *)list {
+    if (!_list) {
+        _list = [[NSMutableSet alloc]init];
+    }
+    return _list;
+}
+
+- (AFHTTPSessionManager *)managerNormal {
+    if(!_managerNormal) {
+        _managerNormal = [AFHTTPSessionManager manager];
+        _managerNormal.requestSerializer = [AFHTTPRequestSerializer serializer];
+        _managerNormal.responseSerializer = [AFHTTPResponseSerializer serializer];
+        if([self.defaultConfig respondsToSelector:@selector(requestTimeout)]){
+            _managerNormal.requestSerializer.timeoutInterval = [self.defaultConfig requestTimeout];
+        }else{
+            _managerNormal.requestSerializer.timeoutInterval = 10;
+        }
+    }
+    return _managerNormal;
+}
+
+- (AFHTTPSessionManager *)managerJson {
+    if(!_managerJson) {
+        _managerJson = [AFHTTPSessionManager manager];
+        _managerJson.requestSerializer = [AFJSONRequestSerializer serializer];
+        _managerJson.responseSerializer = [AFHTTPResponseSerializer serializer];
+        if([self.defaultConfig respondsToSelector:@selector(requestTimeout)]){
+            _managerJson.requestSerializer.timeoutInterval = [self.defaultConfig requestTimeout];
+        }else{
+            _managerJson.requestSerializer.timeoutInterval = 10;
+        }
+    }
+    return _managerJson;
+}
 @end

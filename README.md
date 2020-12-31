@@ -144,6 +144,9 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ##   History
 
+* 2.9.4 - 2020-12-31
+    * 优化之前一个核心实例切换配置的问题。现采用2个核心，分别做不同的请求方案
+    
 * 2.9.3 - 2020-12-28
     * fix: GLRequest 里赋值 requestHeader的时候，如果数组项为空，则会导致Crash的兼容性问题 
 
