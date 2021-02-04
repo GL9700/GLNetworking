@@ -159,3 +159,13 @@
     return _managerJson;
 }
 @end
+
+@implementation GLNetworking (ExtGroup)
+
++ (GLGroupRequest *(^)(void))GROUP {
+    return ^(){
+        GLGroupRequest *groupReq = [GLGroupRequest new];
+        return groupReq;
+    };
+}
+@end

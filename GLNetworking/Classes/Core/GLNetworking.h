@@ -7,6 +7,7 @@
 
 
 #import "GLRequest.h"
+#import "GLGroupRequest.h"
 
 @interface GLNetworking : NSObject
 @property (nonatomic, strong) NSMutableSet *associatedList;
@@ -23,5 +24,12 @@
 + (GLRequest *(^)(void))DOWNLOAD;
 
 + (void)cancelRequests:(NSArray *)requests;
+
+@end
+
+
+@interface GLNetworking (ExtGroup)
+/// 队列请求 ( 可并行-可串行 )
++ (GLGroupRequest *(^)(void))GROUP;
 
 @end
