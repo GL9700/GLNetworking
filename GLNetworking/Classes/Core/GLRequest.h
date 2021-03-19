@@ -45,6 +45,9 @@ typedef NS_ENUM (uint, GLNetMethod) {
 - (GLRequest *(^)(NSString *))path;
 /** 设置请求的 Web Service Name */
 - (GLRequest *(^)(NSString *))webService;
+
+
+
 @end
 
 @interface GLRequest (CacheManagerExt)
