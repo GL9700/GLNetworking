@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
     - 安全：可以在网络请求前进行参数的加密，相应的使用预设的内容也可以做相同的解密。设置不同的加解密方式
                        DESC
 
-  s.homepage         = 'https://github.com/GL9700/GLNetworking'
+  s.homepage         = 'https://gitee.com/GL9700/GLNetworking'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'liguoliang' => '36617161@qq.com' }
-  s.source           = { :git => 'https://github.com/GL9700/GLNetworking.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://gitee.com/GL9700/GLNetworking.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '9.0'
   
