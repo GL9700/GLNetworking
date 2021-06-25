@@ -15,10 +15,15 @@
 + (instancetype)managerWithConfig:(id<GLNetworkPotocol>)config;
 
 /** 创建Request */
-+ (GLRequest *(^)(void))DELETE;
-+ (GLRequest *(^)(void))PUT;
-+ (GLRequest *(^)(void))POST;
 + (GLRequest *(^)(void))GET;
++ (GLRequest *(^)(void))POST;
++ (GLRequest *(^)(void))HEAD;
++ (GLRequest *(^)(void))OPTIONS;
++ (GLRequest *(^)(void))PUT;
++ (GLRequest *(^)(void))DELETE;
++ (GLRequest *(^)(void))PATCH;
++ (GLRequest *(^)(void))TRACE;
++ (GLRequest *(^)(void))CONNECT;
 + (GLRequest *(^)(void))UPLOAD;
 + (GLRequest *(^)(void))DOWNLOAD;
 

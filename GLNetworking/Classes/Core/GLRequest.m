@@ -481,7 +481,11 @@ static NSMutableSet *kAssociatedList;
                 LOG(@"网络状态检查:%d | Online:Yes | hasCache:~ | -- ignore Cache", uniq);
                 LOG(@"网络请求开始:%d | Method:%s | URL:%@ | path:%@ | params:%@", uniq, methodList[self.method], self.url, self._path, self._params);
                 switch (self.method) {
-                    case GLMethodGET: {
+                    case GLMethodOPTIONS:
+                    case GLMethodTRACE:
+                    case GLMethodCONNECT:
+                    case GLMethodGET:
+                    {
                         self.task = [manager GET:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull downloadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
@@ -500,7 +504,8 @@ static NSMutableSet *kAssociatedList;
                         }];
                         break;
                     }
-                    case GLMethodPOST: {
+                    case GLMethodPOST:
+                    {
                         self.task = [manager POST:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] progress: ^(NSProgress *_Nonnull uploadProgress) {} success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
@@ -519,7 +524,42 @@ static NSMutableSet *kAssociatedList;
                         }];
                         break;
                     }
-                    case GLMethodPUT: {
+                    case GLMethodPATCH:
+                    {
+                        self.task = [manager PATCH:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
+                            LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            if (responseObject != nil) {
+                                #if __has_include(<GLCacheData.h>)
+                                [self cacheSaveData:responseObject resp:task.response];
+                                #endif
+                                id resp = [self analyResponse:responseObject withResponse:task.response];
+                                LOG(@"网络请求整理数据:%d | Time:%.3f's | RESP:%@", uniq, CACurrentMediaTime() - stTime, resp);
+                                [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:resp respError:nil handleSuc:sucBLK handleFad:fadBLK];
+                            }
+                            dispatch_semaphore_signal(sem);
+                        } failure: ^(NSURLSessionDataTask *_Nullable task, NSError *_Nonnull error) {
+                            LOG(@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method], CACurrentMediaTime() - stTime, error);
+                            [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
+                            dispatch_semaphore_signal(sem);
+                        }];
+                        break;
+                    }
+                    case GLMethodHEAD:
+                    {
+                        self.task = [manager HEAD:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success:^(NSURLSessionDataTask * _Nonnull task) {
+                            LOG(@"网络请求成功(HEAD 无数据，仅有Head):%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
+                            LOG(@"\nHEAD\n----------%@\n----------",task.response);
+                            [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:nil handleSuc:sucBLK handleFad:fadBLK];
+                            dispatch_semaphore_signal(sem);
+                        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                            LOG(@"网络请求失败:%d | Method:%s | Time:%.3f's | ERR:%@", uniq, methodList[self.method], CACurrentMediaTime() - stTime, error);
+                            [self switchSucOrFadWithURL:self.url HTTPURLResponse:(NSHTTPURLResponse *)task.response respData:nil respError:error handleSuc:sucBLK handleFad:fadBLK];
+                            dispatch_semaphore_signal(sem);
+                        }];
+                        break;
+                    }
+                    case GLMethodPUT:
+                    {
                         self.task = [manager PUT:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {
@@ -538,7 +578,8 @@ static NSMutableSet *kAssociatedList;
                         }];
                         break;
                     }
-                    case GLMethodDELETE: {
+                    case GLMethodDELETE:
+                    {
                         self.task = [manager DELETE:self.url parameters:encodedParam headers:[self._config requestHeaderWithPath:self._path] success: ^(NSURLSessionDataTask *_Nonnull task, id _Nullable responseObject) {
                             LOG(@"网络请求成功:%d | Time:%.3f's", uniq, CACurrentMediaTime() - stTime);
                             if (responseObject != nil) {

@@ -143,7 +143,9 @@ complete:^{
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ##   History
-
+* 2.10.0 - 2021-06-25
+    * 增加了网络请求的更多方法，支持 HEAD、OPTIONS、PATCH 等 
+    
 * 2.9.4 - 2020-12-31
     * 优化之前一个核心实例切换配置的问题。现采用2个核心，分别做不同的请求方案
     

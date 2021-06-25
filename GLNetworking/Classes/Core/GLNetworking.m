@@ -59,22 +59,17 @@
     return request;
 }
 
-+ (GLRequest *(^)(void))DELETE {
+
+
+
+
++ (GLRequest *(^)(void))GET {
     return ^() {
-               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
-               req.method = GLMethodDELETE;
-               return req;
+        GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+        req.method = GLMethodGET;
+        return req;
     };
 }
-
-+ (GLRequest *(^)(void))PUT {
-    return ^() {
-               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
-               req.method = GLMethodPUT;
-               return req;
-    };
-}
-
 + (GLRequest *(^)(void))POST {
     return ^() {
                GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
@@ -82,22 +77,61 @@
                return req;
     };
 }
-
-+ (GLRequest *(^)(void))GET {
++ (GLRequest *(^)(void))HEAD {
     return ^() {
                GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
-               req.method = GLMethodGET;
+               req.method = GLMethodHEAD;
                return req;
     };
 }
-
++ (GLRequest *(^)(void))OPTIONS {
+    return ^() {
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+               req.method = GLMethodOPTIONS;
+               return req;
+    };
+}
++ (GLRequest *(^)(void))PUT {
+    return ^() {
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+               req.method = GLMethodPUT;
+               return req;
+    };
+}
++ (GLRequest *(^)(void))PATCH {
+    return ^() {
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+               req.method = GLMethodPATCH;
+               return req;
+    };
+}
++ (GLRequest *(^)(void))DELETE {
+    return ^() {
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+               req.method = GLMethodDELETE;
+               return req;
+    };
+}
++ (GLRequest *(^)(void))TRACE {
+    return ^() {
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+               req.method = GLMethodTRACE;
+               return req;
+    };
+}
++ (GLRequest *(^)(void))CONNECT {
+    return ^() {
+               GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
+               req.method = GLMethodCONNECT;
+               return req;
+    };
+}
 + (GLRequest *(^)(void))UPLOAD {
     return ^() {
                GLRequest *req = [[GLNetworking defaultNetworking] createRequest];
                return req;
     };
 }
-
 + (GLRequest *(^)(void))DOWNLOAD {
     return ^() {
                GLRequest *req = [[GLNetworking defaultNetworking] createRequest];

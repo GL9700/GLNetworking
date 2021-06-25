@@ -18,7 +18,7 @@
     
 @implementation CustomConfig03
 - (NSString *)requestHost {
-    return @"https://hrss-api.testing1.wdeduc.com";
+    return @"https://www.amazon.com";
 }
 - (NSDictionary *)requestHeaderWithPath:(NSString *)path {
     return @{
@@ -122,7 +122,7 @@
 }
 
 - (void)request_01 {
-    [GLNetworking.GET() success:^(NSURLResponse *header, id response) {
+    [GLNetworking.HEAD().customURL(@"http://header.json-json.com/") success:^(NSURLResponse *header, id response) {
         NSLog(@"-- success -->> dataLength:%ld", ((NSData *)response).length);
     } failure:^(NSError *error, NSURLResponse *response, id data) {
         NSLog(@"-- error:%@ --", error);

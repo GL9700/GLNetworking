@@ -14,10 +14,15 @@ typedef NS_ENUM (uint, GLPriority) {
 };
 
 typedef NS_ENUM (uint, GLNetMethod) {
-    GLMethodPOST,
     GLMethodGET,
+    GLMethodPOST,
+    GLMethodHEAD,
+    GLMethodOPTIONS,
+    GLMethodPUT,
+    GLMethodPATCH,
     GLMethodDELETE,
-    GLMethodPUT
+    GLMethodTRACE,
+    GLMethodCONNECT,
 };
 
 @class AFSecurityPolicy;
