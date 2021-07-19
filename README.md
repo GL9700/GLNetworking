@@ -143,6 +143,11 @@ complete:^{
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ##   History
+
+* 2.11.0 - 2021-07-19
+    * 增加了高级选项，用于指定接收服务器的Content-Type
+    * 增加Group请求方案，用于同一位置可能需要多个请求对应全部结束来进行后续展示
+    
 * 2.10.0 - 2021-06-25
     * 增加了网络请求的更多方法，支持 HEAD、OPTIONS、PATCH 等 
     
