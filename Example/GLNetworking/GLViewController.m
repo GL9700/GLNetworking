@@ -9,6 +9,7 @@
 #import "GLViewController.h"
 #import "GLGlobalNetworkingConfig.h"
 #import <GLNetworking.h>
+#import <GLRequest.h>
 
 
 
@@ -182,31 +183,58 @@
     }];
 }
 
-- (void)req_test_01 {
-    for(int i=0;i<500;i++){
-        NSArray* confs = @[[CustomConfig01 new], [CustomConfig02 new], [CustomConfig03 new]];
-        int useConfIndex = random()%3;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSLog(@"增加请求%d", i);
-            [GLNetworking.POST().path(@"train/v1/train/student/trainList").params(@{@"pageNum":@"1",@"pageSize":@"2"}).config(confs[useConfIndex]) success:^(NSURLResponse *header, id response) {
-                NSLog(@"--suc--");
-            } failure:^(NSError *error, NSURLResponse *response, id data) {
-                NSLog(@"--fad--");
-            } complete:^{
-                NSLog(@"--cpt-%d-useConfig:%d", i, useConfIndex);
-            }];
-        });
-    }
-    NSLog(@"增加");
-}
-- (void)req_test_02 {
-    [GLNetworking.GET().path(@"usercenter/v1/user/findUserOrganList") success:^(NSURLResponse *header, id response) {
-        NSLog(@"--suc--");
+- (void)request_group_01 {
+    [GLNetworking.GROUP().requests(@[
+        GLNetworking.GET().customURL(@"https://home.baidu.com/home/index/contact_us"),
+        GLNetworking.GET(),
+        GLNetworking.GET().customURL(@"https://www.apple.com")
+                                   ])
+     success:^(NSURLResponse *header, id response) {
+        NSLog(@"--request_group_01 suc--");
+        
     } failure:^(NSError *error, NSURLResponse *response, id data) {
-        NSLog(@"--fad--");
+        NSLog(@"--request_group_01 fad--");
+        
     } complete:^{
-        NSLog(@"--cpt--");
+        NSLog(@"--request_group_01 cmp--");
+        
     }];
+}
+- (void)request_group_02 {
+    NSLog(@"-- will start [request_group_02] --");
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        
+        GLNetworking.GROUP().next(^(NSURLResponse *header, id resp, NSError *error, NSString **gotoIdentify) {
+            NSLog(@"-- 构建请求-1 --");
+            return GLNetworking.GET().customURL(@"https://finance.china.com/industrial/11173306/20210204/37249139.html");
+            
+        }).nextIdentify(@"r2").next(^(NSURLResponse *header, id resp, NSError *error, NSString **gotoIdentify) {
+            NSLog(@"-- 接收请求结果-1 (length: %lu)-- 构建请求-2 --", (unsigned long)((NSData *)resp).length);
+            return GLNetworking.GET().customURL(@"https://finance.china.com/stock/13003071/20210204/37249142.html");
+            
+        }).nextIdentify(@"r3").next(^(NSURLResponse *header, id resp, NSError *error, NSString **gotoIdentify) {
+            NSLog(@"-- 接收请求结果-2 (length: %lu)-- 构建请求-3 --", (unsigned long)((NSData *)resp).length);
+            *gotoIdentify = @"r6";
+            return GLNetworking.GET().customURL(@"https://finance.china.com/consume/11173302/20210204/37249150.html");
+            
+        }).nextIdentify(@"r4").next(^(NSURLResponse *header, id resp, NSError *error, NSString **gotoIdentify) {
+            NSLog(@"-- 接收请求结果-3 (length: %lu)-- 构建请求-4 --", (unsigned long)((NSData *)resp).length);
+            return GLNetworking.GET().customURL(@"https://finance.china.com/tech/13001906/20210204/37249143.html");
+            
+        }).nextIdentify(@"r5").next(^(NSURLResponse *header, id resp, NSError *error, NSString **gotoIdentify) {
+            NSLog(@"-- 接收请求结果-4 (length: %lu)-- 构建请求-5 --", (unsigned long)((NSData *)resp).length);
+            return GLNetworking.GET().customURL(@"https://finance.china.com/house/data/37235704.html");
+            
+        }).nextIdentify(@"r6").next(^(NSURLResponse *header, id resp, NSError *error, NSString **gotoIdentify) {
+            NSLog(@"-- 接收请求结果-5 (length: %lu)-- 构建请求-6 --", (unsigned long)((NSData *)resp).length);
+            return GLNetworking.GET().customURL(@"https://finance.china.com/insurance/13003065/20210203/37249094.html");
+            
+        }).nextIdentify(@"final").finally(^(NSURLResponse *header, id resp, NSError *error) {
+            NSLog(@"-- 接收请求结果-6 (length: %lu)-- 整体结束 --", (unsigned long)((NSData *)resp).length);
+            
+        });
+    });
 }
 
 
@@ -238,14 +266,14 @@
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
                                  action:@selector(request_advanced_04)],
-            [self createButtonWithTitle:@"回溯崩溃数据请求01x10"
+            [self createButtonWithTitle:@"高级请求 ｜ 组队模式 ｜ 并行"
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
-                                 action:@selector(req_test_01)],
-            [self createButtonWithTitle:@"回溯崩溃数据请求02x30"
+                                 action:@selector(request_group_01)],
+            [self createButtonWithTitle:@"高级请求 ｜ 组队模式 ｜ 串行"
                               fontColor:[UIColor whiteColor]
                         backgroundColor:[UIColor blueColor]
-                                 action:@selector(req_test_02)]
+                                 action:@selector(request_group_02)]
         ];
     }
     return _buttons;
