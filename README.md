@@ -1,3 +1,9 @@
+
+# 由于某些时刻，不可抗力因素，导致GitHub可能存在无法访问的情况，故此项目移至Gitee
+# 新地址 ： https://gitee.com/GL9700/GLNetworking
+# Cocoapods 引入方式不变
+---
+---
 ![logo](https://github.com/GL9700/gl9700.github.io/blob/master/GLSLogo_800.png?raw=true)
 # GLNetworking
 
@@ -5,20 +11,6 @@
 [![Version](https://img.shields.io/cocoapods/v/GLNetworking.svg?style=flat)](https://cocoapods.org/pods/GLNetworking)
 [![License](https://img.shields.io/cocoapods/l/GLNetworking.svg?style=flat)](https://cocoapods.org/pods/GLNetworking)
 [![Platform](https://img.shields.io/cocoapods/p/GLNetworking.svg?style=flat)](https://cocoapods.org/pods/GLNetworking)
-
-
-
-
-# 由于某些时刻，不可抗力因素，导致GitHub可能存在无法访问的情况，故此项目移至Gitee
-# 新地址 ： https://gitee.com/GL9700/GLNetworking
-# Cocoapods 引入方式不变
-
-
-
-
-
-
-
 
 在一般的项目中，我们都需要进行网络请求，无论是为了发送数据给服务器还是接收最新的数据。
 而且在请求的时候，我们希望使用者不再着重关注网络请求代码内容，而是把更多的精力放到业务逻辑上。
