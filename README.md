@@ -144,6 +144,9 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ##   History
 
+* 2.11.1 - 2021-09-03
+    * 简单修改宏定义 
+    
 * 2.11.0 - 2021-07-19
     * 增加了高级选项，用于指定接收服务器的Content-Type
     * 增加Group请求方案，用于同一位置可能需要多个请求对应全部结束来进行后续展示
